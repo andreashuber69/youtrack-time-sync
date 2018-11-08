@@ -12,7 +12,8 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env"
+      "vuetify", // https://github.com/vuetifyjs/vue-cli-plugin-vuetify/issues/43#issuecomment-435088739
+      "webpack-env",
     ],
     "paths": {
       "@/*": [
