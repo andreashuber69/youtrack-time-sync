@@ -23,7 +23,9 @@
     "serve-development": "vue-cli-service serve --mode development",
     "serve-production": "vue-cli-service serve --mode production",
     "build": "cross-env WEBPACK_BASE_URL=/youtrack-time-sync vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "pretest": "npm run lint",
+    "test": "npm run build"
   },
   "dependencies": {
     "vue": "^2.5.17",
