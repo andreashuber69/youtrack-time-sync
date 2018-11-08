@@ -1,9 +1,27 @@
 {
   "name": "youtrack-time-sync",
+  "author": {
+    "name": "Andreas Huber Dönni"
+  },
+  "keywords": [
+    "youtrack",
+    "time-sync"
+  ],
+  "description": "Automatically create spent time entries in youtrack according to the working time you keep in an Excel sheet.",
+  "homepage": "https://github.com/andreashuber69/youtrack-time-sync/blob/master/README.md",
   "version": "0.1.0",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreashuber69/youtrack-time-sync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andreashuber69/youtrack-time-sync/issues"
+  },
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve-development": "vue-cli-service serve --mode development",
+    "serve-production": "vue-cli-service serve --mode production",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -29,8 +47,23 @@
     }
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
+    ">= 0%",
+    "not Chrome < 54",
+    "not ChromeAndroid < 54",
+    "not Android < 5",
+    "not Firefox < 47",
+    "not FirefoxAndroid < 47",
+    "not Edge < 14",
+    "not Safari < 10",
+    "not iOS < 10",
+    "not Opera < 41",
+    "not OperaMini all",
+    "not Samsung < 5",
+    "not Explorer < 12",
+    "not ExplorerMobile < 12",
+    "not Baidu < 8",
+    "not QQAndroid < 2",
+    "not UCAndroid < 12",
+    "not dead"
   ]
 }
