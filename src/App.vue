@@ -37,10 +37,11 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import HelloWorld from "./components/HelloWorld";
 
+// tslint:disable-next-line:no-default-export
 export default {
-  name: 'App',
+  name: "App",
   components: {
     HelloWorld,
   },
