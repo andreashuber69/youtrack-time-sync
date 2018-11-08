@@ -11,6 +11,9 @@
 // You should have received a copy of the GNU General Public License along with this program. If not, see
 // <http://www.gnu.org/licenses/>.
 
+// tslint:disable-next-line:no-import-side-effect no-implicit-dependencies no-submodule-imports
+import "./assets/material-icons.css";
+// tslint:disable-next-line:ordered-imports
 import Vue from "vue";
 // tslint:disable-next-line:match-default-export-name
 import App from "./App.vue";
