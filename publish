@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+pushd $(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
+
+echo "Bumping version..."
+VERSION=`npm version patch -m "Publish v%s"`
+echo "Building..."
+rm -rf dist
+npm run build
+echo "Pushing sources..."
+git push
+git push --tags
+
+popd

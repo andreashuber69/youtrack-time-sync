@@ -22,7 +22,7 @@
   "scripts": {
     "serve-development": "vue-cli-service serve --mode development",
     "serve-production": "vue-cli-service serve --mode production",
-    "build": "vue-cli-service build",
+    "build": "cross-env WEBPACK_BASE_URL=/youtrack-time-sync vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -34,6 +34,7 @@
   "devDependencies": {
     "@vue/cli-plugin-typescript": "^3.1.1",
     "@vue/cli-service": "^3.1.1",
+    "cross-env": "^5.2.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "typescript": "^3.0.0",

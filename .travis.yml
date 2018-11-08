@@ -1,0 +1,20 @@
+language: node_js
+nodejs:
+  - 8
+
+before_install:
+  - npm i -g npm
+
+branches:
+  only:
+  - /^v\d+\.\d+\.\d+$/
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  local-dir: dist
+  keep-history: true
+  github-token: $GITHUB_TOKEN
+  verbose: true
+  on:
+    tags: true
