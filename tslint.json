@@ -1,19 +1,51 @@
 {
-  "defaultSeverity": "warning",
-  "extends": [
-    "tslint:recommended"
-  ],
-  "linterOptions": {
-    "exclude": [
-      "node_modules/**"
-    ]
-  },
+  "defaultSeverity": "error",
+  "extends": "tslint:all",
+  "rulesDirectory": [],
   "rules": {
-    "quotemark": [true, "single"],
-    "indent": [true, "spaces", 2],
-    "interface-name": false,
-    "ordered-imports": false,
+    "comment-format": [ true, "check-space" ],
+    "completed-docs": false,
+    "file-name-casing": [ true, "pascal-case" ],
+    "jsdoc-format": true,
+    "max-line-length": { "options": [ 120 ] },
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "public-static-field",
+          "public-static-method",
+          "public-instance-field",
+          "public-constructor",
+          "public-instance-method",
+          "protected-static-field",
+          "protected-static-method",
+          "protected-instance-field",
+          "protected-constructor",
+          "protected-instance-method",
+          "private-static-field",
+          "private-static-method",
+          "private-instance-field",
+          "private-constructor",
+          "private-instance-method"
+        ]
+      }
+    ],
+    "newline-per-chained-call": false,
+    "no-any": false,
+    "no-bitwise": false,
+    "no-conditional-assignment": false,
+    "no-console": false,
+    "no-magic-numbers": false,
+    "no-parameter-properties": false,
+    "no-unnecessary-class": [ "allow-static-only" ],
+    "no-unused-variable": false,
+    "no-void-expression": false,
     "object-literal-sort-keys": false,
-    "no-consecutive-blank-lines": false
+    "promise-function-async": false,
+    "strict-boolean-expressions": false,
+    "typedef": false
+  },
+  "jsRules": {
+    "max-line-length": { "options": [ 120 ] }
   }
 }
