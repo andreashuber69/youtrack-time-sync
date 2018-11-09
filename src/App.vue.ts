@@ -10,17 +10,11 @@
 // You should have received a copy of the GNU General Public License along with this program. If not, see
 // <http://www.gnu.org/licenses/>.
 
+import { Component, Vue } from "vue-property-decorator";
 import HelloWorld from "./components/HelloWorld.vue";
 
+// tslint:disable-next-line:no-unsafe-any
+@Component({ components: { HelloWorld } })
 // tslint:disable-next-line:no-default-export
-export default {
-    name: "App",
-    components: {
-        HelloWorld,
-    },
-    data() {
-        return {
-            //
-        };
-    },
-};
+export default class App extends Vue {
+}
