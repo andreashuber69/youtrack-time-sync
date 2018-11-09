@@ -21,14 +21,6 @@
       "problemMatcher": [
         "$tsc",
         "$tslint5"
-      ]
-    },
-    {
-      "type": "npm",
-      "script": "serve-production",
-      "problemMatcher": [
-        "$tsc",
-        "$tslint5"
       ],
       "group": {
         "kind": "build",
@@ -37,8 +29,9 @@
     },
     {
       "type": "npm",
-      "script": "lint",
+      "script": "serve-production",
       "problemMatcher": [
+        "$tsc",
         "$tslint5"
       ]
     },
@@ -46,7 +39,15 @@
       "type": "npm",
       "script": "build",
       "problemMatcher": [
-        "$tsc"
+        "$tsc",
+        "$tslint5"
+      ]
+    },
+    {
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": [
+        "$tslint5"
       ]
     }
   ]
