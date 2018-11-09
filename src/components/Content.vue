@@ -18,7 +18,7 @@
   </v-form>
 </template>
 
-<script src="./HelloWorld.vue.ts" lang="ts">
+<script src="./Content.vue.ts" lang="ts">
 </script>
 
 <style>
