@@ -1,31 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
-    "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
+    // Compilation options
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
     "baseUrl": ".",
+    "experimentalDecorators": true,
+    "lib": [ "esnext", "dom", "dom.iterable", "scripthost" ],
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": [ "src/*" ]
+    },
+    "strict": true,
     "types": [
       "vuetify", // https://github.com/vuetifyjs/vue-cli-plugin-vuetify/issues/43#issuecomment-435088739
       "webpack-env",
     ],
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    // Generation options
+    "module": "esnext",
+    "jsx": "preserve",
+    "sourceMap": true,
+    "target": "es5",
+    "importHelpers": true,
+    "esModuleInterop": true,
   },
   "include": [
     "src/**/*.ts",
