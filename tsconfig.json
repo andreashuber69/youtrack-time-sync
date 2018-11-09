@@ -3,9 +3,14 @@
     // Compilation options
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
+    "downlevelIteration": true,
     "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "lib": [ "esnext", "dom", "dom.iterable", "scripthost" ],
     "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
     "paths": {
       "@/*": [ "src/*" ]
     },
@@ -19,7 +24,6 @@
     "jsx": "preserve",
     "sourceMap": true,
     "target": "es5",
-    "importHelpers": true,
     "esModuleInterop": true,
   },
   "include": [
