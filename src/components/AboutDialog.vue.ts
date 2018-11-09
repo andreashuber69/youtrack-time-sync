@@ -11,24 +11,29 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Vue } from "vue-property-decorator";
-import AboutDialog from "./components/AboutDialog.vue";
-import HelloWorld from "./components/HelloWorld.vue";
-import { Model } from "./model/Model";
+import { Application } from "../model/Application";
 
 // tslint:disable-next-line:no-unsafe-any
-@Component({ components: { AboutDialog, HelloWorld } })
-// tslint:disable-next-line:no-default-export
-export default class App extends Vue {
-    public isDrawerVisible = false;
-    public readonly model = new Model();
+@Component
+/** Implements the About dialog. */
+// tslint:disable-next-line:no-default-export no-unsafe-any
+export default class AboutDialog extends Vue {
+    /** Provides a value indicating whether the dialog is currently open. */
+    public isOpen = false;
 
-    public onMenuClicked(event: MouseEvent) {
-        this.isDrawerVisible = !this.isDrawerVisible;
+    public get title() {
+        return `${Application.title} v${Application.version}`;
     }
 
-    public onAboutClicked(event: MouseEvent) {
-        this.isDrawerVisible = false;
-        // tslint:disable-next-line:no-unsafe-any
-        (this.$refs.aboutDialog as AboutDialog).showDialog();
+    public get packageName() {
+        return Application.packageName;
+    }
+
+    public get userAgent() {
+        return window.navigator.userAgent;
+    }
+
+    public showDialog() {
+        this.isOpen = true;
     }
 }

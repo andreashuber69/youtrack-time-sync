@@ -14,19 +14,26 @@
 
 <template>
   <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
+    <v-navigation-drawer v-model="isDrawerVisible" app dark temporary>
+      <v-list dense>
+        <v-list-tile @click="onAboutClicked">
+          <v-list-tile-action>
+            <v-icon>help</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>About</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar app dark>
+      <v-toolbar-side-icon @click.stop="onMenuClicked"></v-toolbar-side-icon>
+      <v-toolbar-title class="hidden-xs-only">{{ model.title }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank">
-        <span class="mr-2">Latest Release</span>
-        <v-icon>open_in_new</v-icon>
-      </v-btn>
     </v-toolbar>
     <v-content>
       <HelloWorld/>
+      <AboutDialog ref="aboutDialog"/>
     </v-content>
   </v-app>
 </template>
