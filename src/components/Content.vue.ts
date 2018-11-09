@@ -15,7 +15,7 @@ import { Model } from "../model/Model";
 
 @Component
 // tslint:disable-next-line:no-default-export
-export default class HelloWorld extends Vue {
+export default class Content extends Vue {
     @Prop()
     public model?: Model;
 

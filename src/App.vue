@@ -32,7 +32,7 @@
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-content>
-      <HelloWorld :model="model"/>
+      <Content :model="model"/>
       <AboutDialog ref="aboutDialog"/>
     </v-content>
   </v-app>

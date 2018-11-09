@@ -12,11 +12,11 @@
 
 import { Component, Vue } from "vue-property-decorator";
 import AboutDialog from "./components/AboutDialog.vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import Content from "./components/Content.vue";
 import { Model } from "./model/Model";
 
 // tslint:disable-next-line:no-unsafe-any
-@Component({ components: { AboutDialog, HelloWorld } })
+@Component({ components: { AboutDialog, Content } })
 // tslint:disable-next-line:no-default-export
 export default class App extends Vue {
     public isDrawerVisible = false;
