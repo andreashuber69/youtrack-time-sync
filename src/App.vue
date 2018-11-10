@@ -28,7 +28,7 @@
     </v-navigation-drawer>
     <v-toolbar app dark>
       <v-toolbar-side-icon @click.stop="onMenuClicked"></v-toolbar-side-icon>
-      <v-toolbar-title class="hidden-xs-only">{{ model.title }}</v-toolbar-title>
+      <v-toolbar-title class="hidden-xs-only"><v-icon>sync</v-icon>&nbsp;&nbsp;{{ model.title }}</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-content>
