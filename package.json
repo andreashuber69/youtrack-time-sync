@@ -9,7 +9,7 @@
   ],
   "description": "Automatically create spent time entries in youtrack according to the working time you keep in an Excel sheet.",
   "homepage": "https://github.com/andreashuber69/youtrack-time-sync/blob/master/README.md",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
