@@ -13,7 +13,25 @@
 -->
 
 <template>
-  <v-form ref="form" lazy-validation>
+  <v-form ref="form">
+    <v-text-field
+      label="YouTrack Base URL" hint="Example: 'https://company.myjetbrains.com/youtrack'"
+      v-model="model.youTrackBaseUrl" required :rules="[v => !!v || 'A value is required.']">
+    </v-text-field>
+    <v-text-field
+      label="YouTrack Authentication Token" hint="Example: 'perm:QUhV.VGVzdDI=.6fRv9xZztORX9LquKaXJHxf5lsKyoO'"
+      v-model="model.token" required :rules="[v => !!v || 'A value is required.']"
+      :append-icon="showToken ? 'visibility_off' : 'visibility'" :type="showToken ? 'text' : 'password'"
+      @click:append="showToken = !showToken">
+    </v-text-field>
+    <v-text-field
+      label="Excel File"
+      v-model="model.filename" required readonly :rules="[v => !!v || 'A value is required.']"
+      append-icon="open_in_browser" @click:append="onOpenClicked">
+    </v-text-field>
+    <input
+      ref="fileInput" type="file" :accept="model.fileExtension"
+      style="display:none" @change="onFileInputChanged">
     <v-btn @click="onSubmitClicked">Submit</v-btn>
   </v-form>
 </template>

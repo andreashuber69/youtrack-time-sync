@@ -17,4 +17,16 @@ export class Model {
     public get title() {
         return Application.title;
     }
+
+    /** Provides the file extension. */
+    public readonly fileExtension = ".xlsm";
+
+    // tslint:disable-next-line:no-null-keyword
+    public youTrackBaseUrl: string | null = null;
+
+    // tslint:disable-next-line:no-null-keyword
+    public token: string | null = null;
+
+    // tslint:disable-next-line:no-null-keyword
+    public filename: string | null = null;
 }
