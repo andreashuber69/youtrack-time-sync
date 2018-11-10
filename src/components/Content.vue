@@ -13,7 +13,7 @@
 -->
 
 <template>
-  <v-form ref="form">
+  <v-form ref="form" v-model="valid">
     <v-container grid-list-md>
       <v-layout row wrap>
         <v-flex xs12>
@@ -40,7 +40,7 @@
             ref="fileInput" type="file" :accept="model.fileExtension"
             style="display:none" @change="onFileInputChanged">
         </v-flex>
-        <v-btn @click="onSubmitClicked">Submit</v-btn>
+        <v-btn :disabled="!valid" @click="onSubmitClicked">Submit</v-btn>
       </v-layout>
     </v-container>
   </v-form>
