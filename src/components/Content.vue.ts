@@ -19,6 +19,7 @@ export default class Content extends Vue {
     @Prop()
     public model?: Model;
     public showToken = false;
+    public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
 
     public onOpenClicked(event: MouseEvent) {
         this.fileInput.click();
@@ -39,6 +40,10 @@ export default class Content extends Vue {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static requiredRule(value: unknown) {
+        return !!value || "A value is required.";
+    }
 
     private static read(blob: Blob) {
         return new Promise<ArrayBuffer>((resolve, reject) => {
