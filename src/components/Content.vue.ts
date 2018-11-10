@@ -34,10 +34,9 @@ export default class Content extends Vue {
         }
     }
 
+    // tslint:disable-next-line:prefer-function-over-method
     public onSubmitClicked(event: MouseEvent) {
-        if (this.isValid()) {
-            // Whatever
-        }
+        // Whatever
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,11 +65,6 @@ export default class Content extends Vue {
     private get fileInput() {
         // tslint:disable-next-line:no-unsafe-any
         return this.$refs.fileInput as HTMLInputElement;
-    }
-
-    private isValid() {
-        // tslint:disable-next-line:no-unsafe-any
-        return (this.$refs.form as any).validate();
     }
 
     // tslint:disable-next-line:prefer-function-over-method
