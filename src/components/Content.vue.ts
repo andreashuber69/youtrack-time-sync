@@ -11,6 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { read } from "xlsx";
 import { Model } from "../model/Model";
 
 @Component
@@ -73,7 +74,7 @@ export default class Content extends Vue {
             return;
         }
 
-        const contents = await Content.read(files[0]);
+        const workBook = read(new Uint8Array(await Content.read(files[0])), { type: "array" });
         this.checkedModel.filename = files[0].name;
     }
 }
