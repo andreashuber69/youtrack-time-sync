@@ -18,6 +18,19 @@ import { Model } from "../model/Model";
 export default class Content extends Vue {
     @Prop()
     public model?: Model;
+    public showToken = false;
+
+    public onOpenClicked(event: MouseEvent) {
+        this.fileInput.click();
+    }
+
+    public async onFileInputChanged(event: Event) {
+        try {
+            await this.onFileInputChangedImpl((event.target as any).files as FileList);
+        } finally {
+            this.fileInput.value = "";
+        }
+    }
 
     public onSubmitClicked(event: MouseEvent) {
         if (this.isValid()) {
@@ -27,8 +40,40 @@ export default class Content extends Vue {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private static read(blob: Blob) {
+        return new Promise<ArrayBuffer>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => resolve(reader.result as ArrayBuffer);
+            reader.onerror = (ev) => reject("Unable to read file.");
+            reader.readAsArrayBuffer(blob);
+        });
+    }
+
+    private get checkedModel() {
+        if (!this.model) {
+            throw new Error("No model set!");
+        }
+
+        return this.model;
+    }
+
+    private get fileInput() {
+        // tslint:disable-next-line:no-unsafe-any
+        return this.$refs.fileInput as HTMLInputElement;
+    }
+
     private isValid() {
         // tslint:disable-next-line:no-unsafe-any
         return (this.$refs.form as any).validate();
+    }
+
+    // tslint:disable-next-line:prefer-function-over-method
+    private async onFileInputChangedImpl(files: FileList) {
+        if (files.length !== 1) {
+            return;
+        }
+
+        const contents = await Content.read(files[0]);
+        this.checkedModel.filename = files[0].name;
     }
 }
