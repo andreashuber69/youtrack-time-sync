@@ -20,6 +20,7 @@ export default class Content extends Vue {
     public model?: Model;
     public showToken = false;
     public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
+    public valid = false;
 
     public onOpenClicked(event: MouseEvent) {
         this.fileInput.click();
