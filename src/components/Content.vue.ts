@@ -11,8 +11,9 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { read, WorkBook, WorkSheet } from "xlsx";
+import { read } from "xlsx";
 import { Model } from "../model/Model";
+import { WorkBookParser } from "../model/WorkBookParser";
 
 @Component
 // tslint:disable-next-line:no-default-export
@@ -77,44 +78,11 @@ export default class Content extends Vue {
 
         try {
             this.checkedModel.filename = files[0].name;
-            this.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
+            WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
             // tslint:disable-next-line:no-null-keyword
             this.error = null;
         } catch (e) {
             this.error = e instanceof Error ? e.toString() : "Unknown Error!";
         }
-    }
-
-    private parse(workBook: WorkBook) {
-        let containsOneOrMoreWeeks = false;
-
-        for (const sheetName of workBook.SheetNames) {
-            if (sheetName.startsWith("Week")) {
-                containsOneOrMoreWeeks = true;
-                this.parseSheet(workBook.Sheets[sheetName], sheetName);
-            }
-        }
-
-        if (!containsOneOrMoreWeeks) {
-            throw new Error("The selected workbook does not contain any Week sheet.");
-        }
-    }
-
-    // tslint:disable-next-line:prefer-function-over-method
-    private parseSheet(sheet: WorkSheet, sheetName: string) {
-        const ref = sheet["!ref"];
-
-        if (!ref) {
-            throw new Error(`The sheet ${sheetName} does not seem to have dimensions.`);
-        }
-
-        const dividerIndex = ref.indexOf(":");
-
-        if (dividerIndex < 0) {
-            throw new Error(`The sheet ${sheetName} has unexpected dimensions: ${ref}.`);
-        }
-
-        const topLeft = ref.substring(0, dividerIndex);
-        const bottomRight = ref.substring(dividerIndex + 1, ref.length);
     }
 }
