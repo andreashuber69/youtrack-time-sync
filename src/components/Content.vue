@@ -33,7 +33,7 @@
         <v-flex xs12>
           <v-text-field
             label="Excel File"
-            v-model="model.filename" required readonly :rules="rules"
+            v-model="model.filename" required readonly :rules="rules" :error-messages="error"
             append-icon="open_in_browser" @click:append="onOpenClicked">
           </v-text-field>
           <input

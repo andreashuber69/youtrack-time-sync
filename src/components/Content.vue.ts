@@ -22,6 +22,8 @@ export default class Content extends Vue {
     public showToken = false;
     public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
     public valid = false;
+    // tslint:disable-next-line:no-null-keyword
+    public error: string | null = null;
 
     public onOpenClicked(event: MouseEvent) {
         this.fileInput.click();
@@ -68,13 +70,16 @@ export default class Content extends Vue {
         return this.$refs.fileInput as HTMLInputElement;
     }
 
-    // tslint:disable-next-line:prefer-function-over-method
     private async onFileInputChangedImpl(files: FileList) {
         if (files.length !== 1) {
             return;
         }
 
-        const workBook = read(new Uint8Array(await Content.read(files[0])), { type: "array" });
-        this.checkedModel.filename = files[0].name;
+        try {
+            this.checkedModel.filename = files[0].name;
+            const workBook = read(new Uint8Array(await Content.read(files[0])), { type: "array" });
+        } catch (e) {
+            this.error = e instanceof Error ? e.toString() : "Unknown Error";
+        }
     }
 }
