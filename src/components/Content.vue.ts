@@ -11,7 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { read, WorkBook } from "xlsx";
+import { read, WorkBook, WorkSheet } from "xlsx";
 import { Model } from "../model/Model";
 
 @Component
@@ -85,23 +85,36 @@ export default class Content extends Vue {
         }
     }
 
-    // tslint:disable-next-line:prefer-function-over-method
     private parse(workBook: WorkBook) {
         let containsOneOrMoreWeeks = false;
 
         for (const sheetName of workBook.SheetNames) {
             if (sheetName.startsWith("Week")) {
                 containsOneOrMoreWeeks = true;
-                const sheet = workBook.Sheets[sheetName];
-
-                if ((sheet["!ref"] as string).indexOf(":G") < 0) {
-                    throw new Error(`The sheet ${sheetName} has fewer columns than expected (7).`);
-                }
+                this.parseSheet(workBook.Sheets[sheetName], sheetName);
             }
         }
 
         if (!containsOneOrMoreWeeks) {
             throw new Error("The selected workbook does not contain any Week sheet.");
         }
+    }
+
+    // tslint:disable-next-line:prefer-function-over-method
+    private parseSheet(sheet: WorkSheet, sheetName: string) {
+        const ref = sheet["!ref"];
+
+        if (!ref) {
+            throw new Error(`The sheet ${sheetName} does not seem to have dimensions.`);
+        }
+
+        const dividerIndex = ref.indexOf(":");
+
+        if (dividerIndex < 0) {
+            throw new Error(`The sheet ${sheetName} has unexpected dimensions: ${ref}.`);
+        }
+
+        const topLeft = ref.substring(0, dividerIndex);
+        const bottomRight = ref.substring(dividerIndex + 1, ref.length);
     }
 }
