@@ -13,19 +13,19 @@
 import { WorkBook, WorkSheet } from "xlsx";
 
 export interface ISpentTime {
-    readonly paidAbsence: boolean;
-    readonly date: Date;
     readonly title: string;
-    readonly type: string;
-    readonly comment: string;
+    readonly date: Date;
     readonly durationDays: number;
+    readonly paidAbsence: boolean;
+    readonly type?: string;
+    readonly comment?: string;
 }
 
 interface IRow {
     readonly errorPrefix: string;
     readonly row: number;
     readonly holidays?: ICell;
-    readonly otherPaidAbsences?: ICell;
+    readonly otherPaidAbsence?: ICell;
     readonly start?: ICell;
     readonly end?: ICell;
     readonly title?: ICell;
@@ -40,24 +40,32 @@ interface ICell {
 
 export class WorkBookParser {
     public static parse(workBook: WorkBook) {
+        const spentTimes = new Array<ISpentTime>();
+
         let containsOneOrMoreWeeks = false;
 
         for (const sheetName of workBook.SheetNames) {
             if (sheetName.startsWith("Week")) {
                 containsOneOrMoreWeeks = true;
-                this.parseSheet(workBook.Sheets[sheetName], sheetName);
+                this.parseSheet(spentTimes, workBook.Sheets[sheetName], sheetName);
             }
         }
 
         if (!containsOneOrMoreWeeks) {
-            throw new Error("The selected workbook does not seem to contain any Week sheet.");
+            throw new Error("The selected workbook does not seem to contain any Week sheets.");
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // tslint:disable-next-line:prefer-function-over-method
-    private static parseSheet(sheet: WorkSheet, sheetName: string) {
+    // In Excel 1900/01/01 00:00 is represented as the number 1.0
+    // (https://gist.github.com/christopherscott/2782634#gistcomment-1274743). Moreover, Excel incorrectly assumes that
+    // 1900 was a leap year
+    // (https://support.microsoft.com/en-us/help/214326/excel-incorrectly-assumes-that-the-year-1900-is-a-leap-year).
+    // The 0-based epoch therefore starts at 1899/12/30. Finally, the months in js are 0-based...
+    private static readonly excelEpochStart = new Date(1899, 11, 30);
+
+    private static parseSheet(spentTimes: ISpentTime[], sheet: WorkSheet, sheetName: string) {
         const range = sheet["!ref"];
 
         if (!range) {
@@ -72,12 +80,12 @@ export class WorkBookParser {
         this.checkRange((left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
 
         for (let row = firstDataRow; row <= bottom; ++row) {
-            WorkBookParser.parseRow({
+            WorkBookParser.parseRow(spentTimes, {
                 errorPrefix: `In sheet ${sheetName}, `,
                 // tslint:disable-next-line:object-literal-key-quotes
                 "row": row, // TODO
                 holidays: sheet[`A${row}`] as ICell | undefined,
-                otherPaidAbsences: sheet[`B${row}`] as ICell | undefined,
+                otherPaidAbsence: sheet[`B${row}`] as ICell | undefined,
                 start: sheet[`C${row}`] as ICell | undefined,
                 end: sheet[`D${row}`] as ICell | undefined,
                 title: sheet[`E${row}`] as ICell | undefined,
@@ -87,55 +95,67 @@ export class WorkBookParser {
         }
     }
 
-    private static parseRow(row: IRow) {
-        if (row.holidays || row.otherPaidAbsences) {
-            if (!row.start || !row.end || (row.start.f !== undefined) || (row.end.f === undefined)) {
-                throw new Error(
-                    `${row.errorPrefix}C${row.row} must be fixed and D${row.row} must be floating.`);
-            }
-
-            // TODO: Process paid absence
-        } else {
-            WorkBookParser.parsePresence(row);
+    // TODO
+    // tslint:disable-next-line:cyclomatic-complexity
+    private static parseRow(spentTimes: ISpentTime[], row: IRow) {
+        if (row.holidays && row.otherPaidAbsence) {
+            throw new Error(`${row.errorPrefix}A${row.row} and B${row.row} cannot both be non-empty.`);
         }
-    }
 
-    private static parsePresence(row: IRow) {
         if (!row.start !== !row.end) {
-            throw new Error(
-                `${row.errorPrefix}C${row.row} and D${row.row} must either be both empty or non-empty.`);
+            throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must either be both empty or non-empty.`);
         }
 
         if (!row.start || !row.end) {
             return;
         }
 
-        if ((row.start.f === undefined) !== (row.end.f === undefined)) {
-            throw new Error(
-                `${row.errorPrefix}C${row.row} and D${row.row} must either be both values or both formulas.`);
-        }
-
         if ((typeof row.start.v !== "number") || (typeof row.end.v !== "number")) {
             throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must both be dates.`);
         }
 
-        if (row.start.f === undefined) {
-            const time = row.end.v - row.start.v;
+        const spentTime = row.end.v - row.start.v;
 
-            if (time < 0) {
-                throw new Error(`${row.errorPrefix}C${row.row} must be smaller than D${row.row}.`);
+        if (spentTime < 0) {
+            throw new Error(`${row.errorPrefix}C${row.row} must be smaller than D${row.row}.`);
+        }
+
+        if (spentTime >= 1) {
+            throw new Error(`${row.errorPrefix}on row ${row.row} the spent time must be smaller than 1 day.`);
+        }
+
+        const isPaidAbsence = !!row.holidays || !!row.otherPaidAbsence;
+        let title: string | undefined;
+
+        if (isPaidAbsence) {
+            if ((row.start.f !== undefined) || (row.end.f === undefined)) {
+                throw new Error(`${row.errorPrefix}C${row.row} must be fixed and D${row.row} must be floating.`);
             }
 
-            if (time >= 1) {
+            title = row.holidays ? "Holiday" : "Other Paid Absence";
+        } else {
+            if ((row.start.f === undefined) !== (row.end.f === undefined)) {
                 throw new Error(
-                    `${row.errorPrefix}on row ${row.row} the spent time must be smaller than 1 day.`);
+                    `${row.errorPrefix}C${row.row} and D${row.row} must either be both values or both formulas.`);
             }
 
-            if (!row.title || !row.title.v) {
+            title = row.title && row.title.v ? row.title.v.toString() : undefined;
+        }
+
+        if (row.start.f === undefined) {
+            if (!title) {
                 throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
             }
 
-            // TODO: Process presence
+            spentTimes.push({
+                // tslint:disable-next-line:object-literal-key-quotes
+                "title": title,
+                date: this.toDate(row.start.v),
+                durationDays: spentTime,
+                paidAbsence: isPaidAbsence,
+                type: row.type ? row.type.v.toString() : undefined,
+                comment: row.comment ? row.comment.v.toString() : undefined,
+            });
         }
     }
 
@@ -150,5 +170,9 @@ export class WorkBookParser {
         this.checkRange(rowIndex < 0, sheetName, range);
 
         return [ corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10) ];
+    }
+
+    private static toDate(excelDate: number) {
+        return new Date(this.excelEpochStart.valueOf() + Math.floor(excelDate) * 24 * 60 * 60 * 1000);
     }
 }
