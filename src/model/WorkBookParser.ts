@@ -12,6 +12,18 @@
 
 import { WorkBook, WorkSheet } from "xlsx";
 
+export interface ISpentTime {
+    readonly date: Date;
+    readonly title: string;
+    readonly type: string;
+    readonly comment: string;
+}
+
+interface ICell {
+    readonly v: number | string;
+    readonly f?: string;
+}
+
 export class WorkBookParser {
     public static parse(workBook: WorkBook) {
         let containsOneOrMoreWeeks = false;
@@ -42,12 +54,59 @@ export class WorkBookParser {
         this.checkRange(dividerIndex < 0, sheetName, range);
         const [ left, top ] = this.split(range.substring(0, dividerIndex), sheetName, range);
         const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheetName, range);
-        left.toString();
+        const firstDataRow = 5;
+        this.checkRange((left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
+
+        for (let row = firstDataRow; row <= bottom; ++row) {
+            WorkBookParser.parseRow(sheet, row, sheetName);
+        }
     }
 
-    private static checkRange(fail: boolean, sheetName: string, ref: string) {
+    private static parseRow(sheet: WorkSheet, row: number, sheetName: string) {
+        const holidays = sheet[`A${row}`] as ICell | undefined;
+        const otherPaidAbsences = sheet[`B${row}`] as ICell | undefined;
+        const start = sheet[`C${row}`] as ICell | undefined;
+        const end = sheet[`D${row}`] as ICell | undefined;
+        const title = sheet[`E${row}`] as ICell | undefined;
+        const type = sheet[`F${row}`] as ICell | undefined;
+        const comment = sheet[`G${row}`] as ICell | undefined;
+
+        if (holidays || otherPaidAbsences) {
+            if (!start || !end || (start.f !== undefined) || (end.f === undefined)) {
+                throw new Error(`In sheet ${sheetName}, C${row} must be fixed and D${row} must be floating.`);
+            }
+        } else if (start && end) {
+            if ((start.f === undefined) !== (end.f === undefined)) {
+                throw new Error(
+                    `In sheet ${sheetName}, C${row} and D${row} must either be both fixed or both floating.`);
+            }
+
+            if ((typeof start.v !== "number") || (typeof end.v !== "number")) {
+                throw new Error(`In sheet ${sheetName}, C${row} and D${row} must both be dates.`);
+            }
+
+            if (start.f === undefined) {
+                const time = end.v - start.v;
+
+                if (time < 0) {
+                    throw new Error(`In sheet ${sheetName}, C${row} must be smaller than D${row}.`);
+                }
+
+                if (time >= 1) {
+                    throw new Error(`In sheet ${sheetName}, on row ${row} the spent time must be smaller than 1 day.`);
+                }
+
+                if (!title || !title.v) {
+                    throw new Error(`In sheet ${sheetName}, E${row} must not be empty.`);
+                }
+
+            }
+        }
+    }
+
+    private static checkRange(fail: boolean, sheetName: string, range: string) {
         if (fail) {
-            throw new Error(`The sheet ${sheetName} has an unexpected range: ${ref}.`);
+            throw new Error(`The sheet ${sheetName} has an unexpected range: ${range}.`);
         }
     }
 
