@@ -11,7 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { read } from "xlsx";
+import { read, WorkBook } from "xlsx";
 import { Model } from "../model/Model";
 
 @Component
@@ -77,9 +77,31 @@ export default class Content extends Vue {
 
         try {
             this.checkedModel.filename = files[0].name;
-            const workBook = read(new Uint8Array(await Content.read(files[0])), { type: "array" });
+            this.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
+            // tslint:disable-next-line:no-null-keyword
+            this.error = null;
         } catch (e) {
-            this.error = e instanceof Error ? e.toString() : "Unknown Error";
+            this.error = e instanceof Error ? e.toString() : "Unknown Error!";
+        }
+    }
+
+    // tslint:disable-next-line:prefer-function-over-method
+    private parse(workBook: WorkBook) {
+        let containsOneOrMoreWeeks = false;
+
+        for (const sheetName of workBook.SheetNames) {
+            if (sheetName.startsWith("Week")) {
+                containsOneOrMoreWeeks = true;
+                const sheet = workBook.Sheets[sheetName];
+
+                if ((sheet["!ref"] as string).indexOf(":G") < 0) {
+                    throw new Error(`The sheet ${sheetName} has fewer columns than expected (7).`);
+                }
+            }
+        }
+
+        if (!containsOneOrMoreWeeks) {
+            throw new Error("The selected workbook does not contain any Week sheet.");
         }
     }
 }
