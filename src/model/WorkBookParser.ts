@@ -85,7 +85,7 @@ export class WorkBookParser {
         this.checkRange((left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
 
         for (let row = firstDataRow; row <= bottom; ++row) {
-            WorkBookParser.parseRow(spentTimes, {
+            this.parseRow(spentTimes, {
                 errorPrefix: `In sheet ${sheetName}, `,
                 // tslint:disable-next-line:object-literal-key-quotes
                 "row": row, // TODO
@@ -114,8 +114,8 @@ export class WorkBookParser {
         }
 
         const [ start, end ] = period;
-        const spentTime = WorkBookParser.getSpentTime(end, start, row);
-        const [ isPaidAbsence, title ] = WorkBookParser.getWorkDetail(row, start, end);
+        const spentTime = this.getSpentTime(end, start, row);
+        const [ isPaidAbsence, title ] = this.getWorkDetail(row, start, end);
 
         if (start.f === undefined) {
             if (!title) {
