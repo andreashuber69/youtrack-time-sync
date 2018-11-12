@@ -21,21 +21,26 @@ export interface ISpentTime {
     readonly comment?: string;
 }
 
+interface ICell<T> {
+    readonly v: T;
+    readonly f?: string;
+}
+
 interface IRow {
     readonly errorPrefix: string;
     readonly row: number;
-    readonly holidays?: ICell;
-    readonly otherPaidAbsence?: ICell;
-    readonly start?: ICell;
-    readonly end?: ICell;
-    readonly title?: ICell;
-    readonly type?: ICell;
-    readonly comment?: ICell;
+    readonly holidays?: ICell<number | string>;
+    readonly otherPaidAbsence?: ICell<number | string>;
+    readonly start?: ICell<number | string>;
+    readonly end?: ICell<number | string>;
+    readonly title?: ICell<number | string>;
+    readonly type?: ICell<number | string>;
+    readonly comment?: ICell<number | string>;
 }
 
-interface ICell {
-    readonly v: number | string;
-    readonly f?: string;
+interface IPeriod {
+    readonly start: ICell<number>;
+    readonly end: ICell<number>;
 }
 
 export class WorkBookParser {
@@ -84,37 +89,26 @@ export class WorkBookParser {
                 errorPrefix: `In sheet ${sheetName}, `,
                 // tslint:disable-next-line:object-literal-key-quotes
                 "row": row, // TODO
-                holidays: sheet[`A${row}`] as ICell | undefined,
-                otherPaidAbsence: sheet[`B${row}`] as ICell | undefined,
-                start: sheet[`C${row}`] as ICell | undefined,
-                end: sheet[`D${row}`] as ICell | undefined,
-                title: sheet[`E${row}`] as ICell | undefined,
-                type: sheet[`F${row}`] as ICell | undefined,
-                comment: sheet[`G${row}`] as ICell | undefined,
+                holidays: sheet[`A${row}`] as ICell<number | string> | undefined,
+                otherPaidAbsence: sheet[`B${row}`] as ICell<number | string> | undefined,
+                start: sheet[`C${row}`] as ICell<number | string> | undefined,
+                end: sheet[`D${row}`] as ICell<number | string> | undefined,
+                title: sheet[`E${row}`] as ICell<number | string> | undefined,
+                type: sheet[`F${row}`] as ICell<number | string> | undefined,
+                comment: sheet[`G${row}`] as ICell<number | string> | undefined,
             });
         }
     }
 
-    // TODO
-    // tslint:disable-next-line:cyclomatic-complexity
     private static parseRow(spentTimes: ISpentTime[], row: IRow) {
-        if (row.holidays && row.otherPaidAbsence) {
-            throw new Error(`${row.errorPrefix}A${row.row} and B${row.row} cannot both be non-empty.`);
-        }
+        const period = this.getPeriod(row);
 
-        if (!row.start !== !row.end) {
-            throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must either be both empty or non-empty.`);
-        }
-
-        if (!row.start || !row.end) {
+        if (!period) {
             return;
         }
 
-        if ((typeof row.start.v !== "number") || (typeof row.end.v !== "number")) {
-            throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must both be dates.`);
-        }
-
-        const spentTime = row.end.v - row.start.v;
+        const [ start, end ] = period;
+        const spentTime = end.v - start.v;
 
         if (spentTime < 0) {
             throw new Error(`${row.errorPrefix}C${row.row} must be smaller than D${row.row}.`);
@@ -124,25 +118,9 @@ export class WorkBookParser {
             throw new Error(`${row.errorPrefix}on row ${row.row} the spent time must be smaller than 1 day.`);
         }
 
-        const isPaidAbsence = !!row.holidays || !!row.otherPaidAbsence;
-        let title: string | undefined;
+        const [ isPaidAbsence, title ] = WorkBookParser.getWorkDetail(row, start, end);
 
-        if (isPaidAbsence) {
-            if ((row.start.f !== undefined) || (row.end.f === undefined)) {
-                throw new Error(`${row.errorPrefix}C${row.row} must be fixed and D${row.row} must be floating.`);
-            }
-
-            title = row.holidays ? "Holiday" : "Other Paid Absence";
-        } else {
-            if ((row.start.f === undefined) !== (row.end.f === undefined)) {
-                throw new Error(
-                    `${row.errorPrefix}C${row.row} and D${row.row} must either be both values or both formulas.`);
-            }
-
-            title = row.title && row.title.v ? row.title.v.toString() : undefined;
-        }
-
-        if (row.start.f === undefined) {
+        if (start.f === undefined) {
             if (!title) {
                 throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
             }
@@ -150,12 +128,51 @@ export class WorkBookParser {
             spentTimes.push({
                 // tslint:disable-next-line:object-literal-key-quotes
                 "title": title,
-                date: this.toDate(row.start.v),
+                date: this.toDate(start.v),
                 durationDays: spentTime,
                 paidAbsence: isPaidAbsence,
                 type: row.type ? row.type.v.toString() : undefined,
                 comment: row.comment ? row.comment.v.toString() : undefined,
             });
+        }
+    }
+
+    private static getPeriod(row: IRow): [ ICell<number>, ICell<number> ] | undefined {
+        if (!row.start !== !row.end) {
+            throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must either be both empty or non-empty.`);
+        }
+
+        if (!row.start || !row.end) {
+            return undefined;
+        }
+
+        if ((typeof row.start.v !== "number") || (typeof row.end.v !== "number")) {
+            throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must both be dates.`);
+        }
+
+        return [ { v: row.start.v, f: row.start.f }, { v: row.end.v, f: row.end.f } ];
+    }
+
+    private static getWorkDetail(row: IRow, start: ICell<number>, end: ICell<number>): [ boolean, string | undefined ] {
+        if (row.holidays && row.otherPaidAbsence) {
+            throw new Error(`${row.errorPrefix}A${row.row} and B${row.row} cannot both be non-empty.`);
+        }
+
+        const isPaidAbsence = !!row.holidays || !!row.otherPaidAbsence;
+
+        if (isPaidAbsence) {
+            if ((start.f !== undefined) || (end.f === undefined)) {
+                throw new Error(`${row.errorPrefix}C${row.row} must be fixed and D${row.row} must be floating.`);
+            }
+
+            return [ isPaidAbsence, row.holidays ? "Holiday" : "Other Paid Absence" ];
+        } else {
+            if ((start.f === undefined) !== (end.f === undefined)) {
+                throw new Error(
+                    `${row.errorPrefix}C${row.row} and D${row.row} must either be both values or both formulas.`);
+            }
+
+            return [ isPaidAbsence, row.title && row.title.v && row.title.v.toString() || undefined ];
         }
     }
 
