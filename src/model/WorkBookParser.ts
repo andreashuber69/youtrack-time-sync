@@ -100,6 +100,12 @@ export class WorkBookParser {
         }
     }
 
+    private static checkRange(fail: boolean, sheetName: string, range: string) {
+        if (fail) {
+            throw new Error(`The sheet ${sheetName} has an unexpected range: ${range}.`);
+        }
+    }
+
     private static parseRow(spentTimes: ISpentTime[], row: IRow) {
         const period = this.getPeriod(row);
 
@@ -108,16 +114,7 @@ export class WorkBookParser {
         }
 
         const [ start, end ] = period;
-        const spentTime = end.v - start.v;
-
-        if (spentTime < 0) {
-            throw new Error(`${row.errorPrefix}C${row.row} must be smaller than D${row.row}.`);
-        }
-
-        if (spentTime >= 1) {
-            throw new Error(`${row.errorPrefix}on row ${row.row} the spent time must be smaller than 1 day.`);
-        }
-
+        const spentTime = WorkBookParser.getSpentTime(end, start, row);
         const [ isPaidAbsence, title ] = WorkBookParser.getWorkDetail(row, start, end);
 
         if (start.f === undefined) {
@@ -137,6 +134,13 @@ export class WorkBookParser {
         }
     }
 
+    private static split(corner: string, sheetName: string, range: string): [ string, number ] {
+        const rowIndex = corner.search("[0-9]+");
+        this.checkRange(rowIndex < 0, sheetName, range);
+
+        return [ corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10) ];
+    }
+
     private static getPeriod(row: IRow): [ ICell<number>, ICell<number> ] | undefined {
         if (!row.start !== !row.end) {
             throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must either be both empty or non-empty.`);
@@ -151,6 +155,20 @@ export class WorkBookParser {
         }
 
         return [ { v: row.start.v, f: row.start.f }, { v: row.end.v, f: row.end.f } ];
+    }
+
+    private static getSpentTime(end: ICell<number>, start: ICell<number>, row: IRow) {
+        const spentTime = end.v - start.v;
+
+        if (spentTime < 0) {
+            throw new Error(`${row.errorPrefix}C${row.row} must be smaller than D${row.row}.`);
+        }
+
+        if (spentTime >= 1) {
+            throw new Error(`${row.errorPrefix}on row ${row.row} the spent time must be smaller than 1 day.`);
+        }
+
+        return spentTime;
     }
 
     private static getWorkDetail(row: IRow, start: ICell<number>, end: ICell<number>): [ boolean, string | undefined ] {
@@ -176,20 +194,7 @@ export class WorkBookParser {
         }
     }
 
-    private static checkRange(fail: boolean, sheetName: string, range: string) {
-        if (fail) {
-            throw new Error(`The sheet ${sheetName} has an unexpected range: ${range}.`);
-        }
-    }
-
-    private static split(corner: string, sheetName: string, range: string): [ string, number ] {
-        const rowIndex = corner.search("[0-9]+");
-        this.checkRange(rowIndex < 0, sheetName, range);
-
-        return [ corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10) ];
-    }
-
     private static toDate(excelDate: number) {
-        return new Date(this.excelEpochStart.valueOf() + Math.floor(excelDate) * 24 * 60 * 60 * 1000);
+        return new Date(this.excelEpochStart.valueOf() + (Math.floor(excelDate) * 24 * 60 * 60 * 1000));
     }
 }
