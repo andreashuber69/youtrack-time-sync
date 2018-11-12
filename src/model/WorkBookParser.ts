@@ -83,12 +83,22 @@ export class WorkBookParser {
         const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheetName, range);
         const firstDataRow = 5;
         this.checkRange((left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
+        this.iterateRows(firstDataRow, bottom, spentTimes, sheetName, sheet);
+    }
 
+    private static checkRange(fail: boolean, sheetName: string, range: string) {
+        if (fail) {
+            throw new Error(`The sheet ${sheetName} has an unexpected range: ${range}.`);
+        }
+    }
+
+    private static iterateRows(
+        firstDataRow: number, bottom: number, spentTimes: ISpentTime[], sheetName: string, sheet: WorkSheet) {
         for (let row = firstDataRow; row <= bottom; ++row) {
             this.parseRow(spentTimes, {
                 errorPrefix: `In sheet ${sheetName}, `,
                 // tslint:disable-next-line:object-literal-key-quotes
-                "row": row, // TODO
+                "row": row,
                 holidays: sheet[`A${row}`] as ICell<number | string> | undefined,
                 otherPaidAbsence: sheet[`B${row}`] as ICell<number | string> | undefined,
                 start: sheet[`C${row}`] as ICell<number | string> | undefined,
@@ -97,12 +107,6 @@ export class WorkBookParser {
                 type: sheet[`F${row}`] as ICell<number | string> | undefined,
                 comment: sheet[`G${row}`] as ICell<number | string> | undefined,
             });
-        }
-    }
-
-    private static checkRange(fail: boolean, sheetName: string, range: string) {
-        if (fail) {
-            throw new Error(`The sheet ${sheetName} has an unexpected range: ${range}.`);
         }
     }
 
