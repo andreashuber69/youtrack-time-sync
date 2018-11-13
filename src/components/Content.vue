@@ -43,11 +43,11 @@
         <v-flex xs12>
           <v-data-table :headers="timeHeaders" :items="times" hide-actions class="elevation-1">
             <template slot="items" slot-scope="props">
-              <td>{{ props.item.date.toString() }}</td>
+              <td>{{ props.item.date.toLocaleDateString() }}</td>
               <td>{{ props.item.title }}</td>
               <td>{{ props.item.type }}</td>
               <td>{{ props.item.comment }}</td>
-              <td>{{ props.item.durationDays }}</td>
+              <td class="text-xs-right">{{ Math.round(props.item.durationDays * 24 * 4) * 15 }}</td>
             </template>
           </v-data-table>          
         </v-flex>
