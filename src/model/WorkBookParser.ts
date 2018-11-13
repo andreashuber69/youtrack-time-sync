@@ -11,15 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { WorkBook, WorkSheet } from "xlsx";
-
-export interface ISpentTime {
-    readonly title: string;
-    readonly date: Date;
-    readonly durationDays: number;
-    readonly paidAbsence: boolean;
-    readonly type?: string;
-    readonly comment?: string;
-}
+import { SpentTimes } from "./SpentTimes";
 
 interface ICell<T> {
     readonly v: T;
@@ -45,7 +37,7 @@ interface IPeriod {
 
 export class WorkBookParser {
     public static parse(workBook: WorkBook) {
-        const spentTimes = new Array<ISpentTime>();
+        const spentTimes = new SpentTimes();
 
         let containsOneOrMoreWeeks = false;
 
@@ -59,6 +51,8 @@ export class WorkBookParser {
         if (!containsOneOrMoreWeeks) {
             throw new Error("The selected workbook does not seem to contain any Week sheets.");
         }
+
+        return spentTimes;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +64,7 @@ export class WorkBookParser {
     // The 0-based epoch therefore starts at 1899/12/30. Finally, the months in js are 0-based...
     private static readonly excelEpochStart = new Date(1899, 11, 30);
 
-    private static parseSheet(spentTimes: ISpentTime[], sheet: WorkSheet, sheetName: string) {
+    private static parseSheet(spentTimes: SpentTimes, sheet: WorkSheet, sheetName: string) {
         const range = sheet["!ref"];
 
         if (!range) {
@@ -93,7 +87,7 @@ export class WorkBookParser {
     }
 
     private static iterateRows(
-        firstDataRow: number, bottom: number, spentTimes: ISpentTime[], sheetName: string, sheet: WorkSheet) {
+        firstDataRow: number, bottom: number, spentTimes: SpentTimes, sheetName: string, sheet: WorkSheet) {
         for (let row = firstDataRow; row <= bottom; ++row) {
             this.parseRow(spentTimes, {
                 errorPrefix: `In sheet ${sheetName}, `,
@@ -110,7 +104,7 @@ export class WorkBookParser {
         }
     }
 
-    private static parseRow(spentTimes: ISpentTime[], row: IRow) {
+    private static parseRow(spentTimes: SpentTimes, row: IRow) {
         const period = this.getPeriod(row);
 
         if (!period) {
@@ -126,14 +120,15 @@ export class WorkBookParser {
                 throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
             }
 
-            spentTimes.push({
+            spentTimes.add({
+                date: this.toDate(start.v),
                 // tslint:disable-next-line:object-literal-key-quotes
                 "title": title,
-                date: this.toDate(start.v),
+                type: row.type && row.type.v.toString() || undefined,
+                comment: row.comment && row.comment.v.toString() || undefined,
+                // tslint:disable-next-line:object-literal-key-quotes
+                "isPaidAbsence": isPaidAbsence,
                 durationDays: spentTime,
-                paidAbsence: isPaidAbsence,
-                type: row.type ? row.type.v.toString() : undefined,
-                comment: row.comment ? row.comment.v.toString() : undefined,
             });
         }
     }
