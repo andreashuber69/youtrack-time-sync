@@ -41,6 +41,8 @@
             style="display:none" @change="onFileInputChanged">
         </v-flex>
       </v-layout>
+    </v-container>
+    <v-container grid-list-md>
       <v-layout justify-center>
         <v-data-table :headers="timeHeaders" :items="times" hide-actions class="elevation-1">
           <template slot="items" slot-scope="props">
@@ -53,7 +55,9 @@
           </template>
         </v-data-table>          
       </v-layout>
-      <v-layout row wrap>
+    </v-container>
+    <v-container grid-list-md>
+      <v-layout justify-center>
         <v-btn :disabled="!valid" @click="onSubmitClicked">Submit</v-btn>
       </v-layout>
     </v-container>

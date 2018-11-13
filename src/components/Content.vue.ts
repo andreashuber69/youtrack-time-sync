@@ -97,6 +97,7 @@ export default class Content extends Vue {
             this.error = null;
         } catch (e) {
             this.error = e instanceof Error ? e.toString() : "Unknown Error!";
+            this.times.splice(0);
         }
     }
 }
