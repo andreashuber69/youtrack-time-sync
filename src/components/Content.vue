@@ -40,6 +40,17 @@
             ref="fileInput" type="file" :accept="model.fileExtension"
             style="display:none" @change="onFileInputChanged">
         </v-flex>
+        <v-flex xs12>
+          <v-data-table :headers="timeHeaders" :items="times" hide-actions class="elevation-1">
+            <template slot="items" slot-scope="props">
+              <td>{{ props.item.date.toString() }}</td>
+              <td>{{ props.item.title }}</td>
+              <td>{{ props.item.type }}</td>
+              <td>{{ props.item.comment }}</td>
+              <td>{{ props.item.durationDays }}</td>
+            </template>
+          </v-data-table>          
+        </v-flex>
         <v-btn :disabled="!valid" @click="onSubmitClicked">Submit</v-btn>
       </v-layout>
     </v-container>

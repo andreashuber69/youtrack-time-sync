@@ -13,6 +13,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { read } from "xlsx";
 import { Model } from "../model/Model";
+import { ISpentTime } from "../model/SpentTimes";
 import { WorkBookParser } from "../model/WorkBookParser";
 
 @Component
@@ -25,6 +26,17 @@ export default class Content extends Vue {
     public valid = false;
     // tslint:disable-next-line:no-null-keyword
     public error: string | null = null;
+
+    public timeHeaders = [
+        { text: "Date", align: "left", sortable: false, value: "date" },
+        { text: "Title", align: "left", sortable: false, value: "title" },
+        { text: "Type", align: "left", sortable: false, value: "type" },
+        { text: "Comment", align: "left", sortable: false, value: "comment" },
+        { text: "Spent Time (Days)", align: "left", sortable: false, value: "durationDays" },
+    ];
+
+    // tslint:disable-next-line:no-null-keyword
+    public times = new Array<ISpentTime>();
 
     public onOpenClicked(event: MouseEvent) {
         this.fileInput.click();
@@ -78,7 +90,9 @@ export default class Content extends Vue {
 
         try {
             this.checkedModel.filename = files[0].name;
-            WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
+            this.times =
+                WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" })).entries();
+
             // tslint:disable-next-line:no-null-keyword
             this.error = null;
         } catch (e) {
