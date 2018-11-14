@@ -98,8 +98,7 @@ export default class Content extends Vue {
             this.error = null;
 
             if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
-                const youTrack = new YouTrack(
-                    "https://cmiag.myjetbrains.com/youtrack", this.checkedModel.token);
+                const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
                 const user = await youTrack.getCurrentUser();
                 user.toString();
             }
