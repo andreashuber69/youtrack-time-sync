@@ -19,31 +19,31 @@ type Method = "GET" | "POST" | "PUT" | "DELETE";
 export class YouTrack {
     public constructor(private readonly baseUrl: string, private readonly authenticationToken: string) {
         this.headersInit = new Headers([
-            [ "Accept", "text/plain" ],
+            [ "Accept", "application/json" ],
             [ "Authorization", `Bearer ${this.authenticationToken}` ],
             [ "Cache-Control", "no-cache" ],
-            [ "Content-Type", "text/plain" ],
+            [ "Content-Type", "application/json" ],
         ]);
     }
 
     public getCurrentUser() {
-        return this.get("api/admin/users/me");
+        return this.get<IUser>("youtrack/api/admin/users/me");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private readonly headersInit: Headers;
 
-    private get(path: string) {
-        return this.fetch<IUser>(path, "GET");
+    private get<T>(path: string) {
+        return this.fetch<T>(path, "GET");
     }
 
     private async fetch<T>(path: string, method: Method, body?: unknown) {
         let responseText: string;
 
         try {
-            responseText = await (await window.fetch(
-                new URL(path, this.baseUrl).href, this.getInit(method, body))).text();
+            responseText =
+                await (await window.fetch(new URL(path, this.baseUrl).href, this.getInit(method, body))).text();
         } catch (e) {
             throw new Error(`Network Error: ${e}`);
         }
