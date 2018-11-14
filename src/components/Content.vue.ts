@@ -15,6 +15,7 @@ import { read } from "xlsx";
 import { Model } from "../model/Model";
 import { ISpentTime } from "../model/SpentTimes";
 import { WorkBookParser } from "../model/WorkBookParser";
+import { YouTrack } from "../model/YouTrack";
 
 @Component
 // tslint:disable-next-line:no-default-export
@@ -95,6 +96,13 @@ export default class Content extends Vue {
 
             // tslint:disable-next-line:no-null-keyword
             this.error = null;
+
+            if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
+                const youTrack = new YouTrack(
+                    "https://cmiag.myjetbrains.com/youtrack", this.checkedModel.token);
+                const user = await youTrack.getCurrentUser();
+                user.toString();
+            }
         } catch (e) {
             this.error = e instanceof Error ? e.toString() : "Unknown Error!";
             this.times.splice(0);
