@@ -39,26 +39,31 @@ export class YouTrack {
     }
 
     private async fetch<T>(path: string, method: Method, body?: unknown) {
-        let responseText: string;
+        let response: Response;
 
         try {
-            responseText =
-                await (await window.fetch(new URL(path, this.baseUrl).href, this.getInit(method, body))).text();
+            response = await window.fetch(new URL(path, this.baseUrl).href, this.getInit(method, body));
         } catch (e) {
             throw new Error(`Network Error: ${e}`);
         }
 
-        try {
-            const result = JSON.parse(responseText) as T | null;
-
-            if (result === null) {
-                throw new Error("Unexpected null response.");
-            }
-
-            return result;
-        } catch (e) {
-            throw new Error(`Invalid JSON: ${e}`);
+        if (!response.ok) {
+            throw new Error(`Response Status: ${response.status} ${response.statusText}`);
         }
+
+        let result: T | null;
+
+        try {
+            result = JSON.parse(await response.text()) as T | null;
+        } catch (e) {
+            throw new Error(`Parse Failure: ${e}`);
+        }
+
+        if (result === null) {
+            throw new Error("Unexpected null response.");
+        }
+
+        return result;
     }
 
     private getInit(methodInit: Method, body?: unknown): RequestInit {
