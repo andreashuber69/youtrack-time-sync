@@ -18,7 +18,7 @@
       <v-layout row wrap>
         <v-flex xs12>
           <v-text-field
-            label="YouTrack Base URL" hint="Example: 'https://company.myjetbrains.com/youtrack'"
+            label="YouTrack Base URL" hint="Example: 'https://company.myjetbrains.com"
             v-model="model.youTrackBaseUrl" required :rules="rules">
           </v-text-field>
         </v-flex>
