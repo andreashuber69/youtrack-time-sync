@@ -15,7 +15,7 @@ import { read } from "xlsx";
 import { Model } from "../model/Model";
 import { ISpentTime } from "../model/SpentTimes";
 import { WorkBookParser } from "../model/WorkBookParser";
-import { YouTrack } from "../model/YouTrack";
+import { YouTrackSpentTimes } from "../model/YouTrackSpentTimes";
 
 @Component
 // tslint:disable-next-line:no-default-export
@@ -98,9 +98,10 @@ export default class Content extends Vue {
             this.error = null;
 
             if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
-                const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
-                const user = await youTrack.getCurrentUser();
-                user.toString();
+                const youTrackTimes = new YouTrackSpentTimes(
+                    this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
+                const issueIds = new Set(this.times.filter((t) => t.title.includes("-")).map((t) => t.title));
+                const loggedTimes = await youTrackTimes.getSpentTimes([ ...issueIds ]);
             }
         } catch (e) {
             this.error = e instanceof Error ? e.toString() : "Unknown Error!";

@@ -14,6 +14,28 @@ export interface IUser {
     id: string;
 }
 
+export interface IIssueWorkItem {
+    creator: {
+        id: string;
+    };
+
+    date: number;
+
+    duration: {
+        minutes: number;
+    };
+
+    issue: {
+        id: string;
+    };
+
+    text: string;
+
+    type: {
+        name: string;
+    };
+}
+
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
 export class YouTrack {
@@ -30,19 +52,42 @@ export class YouTrack {
         return this.get<IUser>("youtrack/api/admin/users/me");
     }
 
+    public async getWorkItems(issueId: string) {
+        const result = await this.get<IIssueWorkItem[]>(
+            `youtrack/api/issues/${issueId}/timeTracking/workItems`,
+            [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]]);
+
+        // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries in
+        // the <string>-<number> and the <number>-<number> format. The following makes sure that the returned data will
+        // always refer to the issueId passed to this method.
+        for (const workItem of result) {
+            workItem.issue.id = issueId;
+        }
+
+        return result;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private readonly headersInit: Headers;
 
-    private get<T>(path: string) {
-        return this.fetch<T>(path, "GET");
+    private get<T>(path: string, params?: Array<[ string, string ]>) {
+        return this.fetch<T>(path, "GET", params);
     }
 
-    private async fetch<T>(path: string, method: Method, body?: unknown) {
+    private async fetch<T>(
+        path: string, method: Method, params?: Array<[ string, string ]>, body?: unknown) {
         let response: Response;
+        const url = new URL(path, this.baseUrl);
+
+        if (params) {
+            for (const param of params) {
+                url.searchParams.append(param[0], param[1]);
+            }
+        }
 
         try {
-            response = await window.fetch(new URL(path, this.baseUrl).href, this.getInit(method, body));
+            response = await window.fetch(url.href, this.getInit(method, body));
         } catch (e) {
             throw new Error(`Network Error: ${e}`);
         }
