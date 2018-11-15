@@ -21,7 +21,7 @@ export interface ISpentTime {
 
 export class SpentTimes {
     public add(newEntry: ISpentTime) {
-        const key = `${newEntry.date}|${newEntry.title}|${newEntry.type}`;
+        const key = `${newEntry.date.toDateString()}|${newEntry.title}|${newEntry.type}`;
         const existingEntry = this.map.get(key);
 
         if (existingEntry) {
