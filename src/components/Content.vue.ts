@@ -29,11 +29,11 @@ export default class Content extends Vue {
     public error: string | null = null;
 
     public timeHeaders = [
-        { text: "Date", align: "left", sortable: false, value: "date" },
-        { text: "Title", align: "left", sortable: false, value: "title" },
-        { text: "Type", align: "left", sortable: false, value: "type" },
-        { text: "Comment", align: "left", sortable: false, value: "comment" },
-        { text: "Spent Time (Minutes)", align: "right", sortable: false, value: "durationDays" },
+        { text: "Date", align: "left", sortable: false },
+        { text: "Title", align: "left", sortable: false },
+        { text: "Type", align: "left", sortable: false },
+        { text: "Comment", align: "left", sortable: false },
+        { text: "Spent Time (Minutes)", align: "right", sortable: false },
     ];
 
     // tslint:disable-next-line:no-null-keyword
