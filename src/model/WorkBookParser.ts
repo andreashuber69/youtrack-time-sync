@@ -189,6 +189,9 @@ export class WorkBookParser {
     }
 
     private static toDate(excelDate: number) {
-        return new Date(this.excelEpochStart.valueOf() + (Math.floor(excelDate) * 24 * 60 * 60 * 1000));
+        const start = new Date(this.excelEpochStart.getTime() + (excelDate * 24 * 60 * 60 * 1000));
+
+        // YouTrack work item dates are represented as milliseconds since unix epoch rounded down to midnight UTC.
+        return new Date(Math.floor(start.getTime() / 1000 / 60 / 60 / 24) * 24 * 60 * 60 * 1000);
     }
 }
