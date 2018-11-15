@@ -30,11 +30,6 @@ interface IRow {
     readonly comment?: ICell<number | string>;
 }
 
-interface IPeriod {
-    readonly start: ICell<number>;
-    readonly end: ICell<number>;
-}
-
 export class WorkBookParser {
     public static parse(workBook: WorkBook) {
         const spentTimes = new SpentTimes();
@@ -128,7 +123,7 @@ export class WorkBookParser {
                 comment: row.comment && row.comment.v.toString() || undefined,
                 // tslint:disable-next-line:object-literal-key-quotes
                 "isPaidAbsence": isPaidAbsence,
-                durationDays: spentTime,
+                durationMinutes: spentTime * 24 * 60,
             });
         }
     }

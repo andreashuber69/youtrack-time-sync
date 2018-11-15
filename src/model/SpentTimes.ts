@@ -16,7 +16,7 @@ export interface ISpentTime {
     readonly type?: string;
     readonly isPaidAbsence: boolean;
     comment?: string;
-    durationDays: number;
+    durationMinutes: number;
 }
 
 export class SpentTimes {
@@ -25,7 +25,7 @@ export class SpentTimes {
         const existingEntry = this.map.get(key);
 
         if (existingEntry) {
-            existingEntry.durationDays += newEntry.durationDays;
+            existingEntry.durationMinutes += newEntry.durationMinutes;
             existingEntry.comment = newEntry.comment;
         } else {
             this.map.set(key, newEntry);
