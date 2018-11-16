@@ -20,16 +20,42 @@ export interface ISpentTime {
 }
 
 export class SpentTimes {
-    public add(newEntry: ISpentTime) {
-        const key = `${newEntry.date.toDateString()}|${newEntry.title}|${newEntry.type}`;
-        const existingEntry = this.map.get(key);
+    public constructor(private readonly roundingMinutes: 1 | 5 | 10 | 15 | 30) {
+    }
+
+    public add(entry: ISpentTime) {
+        const [ key, existingEntry ] = this.findExisting(entry);
 
         if (existingEntry) {
-            existingEntry.durationMinutes += newEntry.durationMinutes;
-            existingEntry.comment = newEntry.comment;
+            existingEntry.durationMinutes += entry.durationMinutes;
+            existingEntry.comment =
+                existingEntry.comment ? `${existingEntry.comment}\n${entry.comment}` : entry.comment;
         } else {
-            this.map.set(key, newEntry);
+            this.map.set(key, entry);
         }
+    }
+
+    public subtract(entry: ISpentTime) {
+        const [ key, existingEntry ] = this.findExisting(entry);
+
+        if (!existingEntry) {
+            return false;
+        }
+
+        this.roundDuration(existingEntry);
+        this.roundDuration(entry);
+
+        if (existingEntry.durationMinutes < entry.durationMinutes) {
+            return false;
+        }
+
+        existingEntry.durationMinutes -= entry.durationMinutes;
+
+        if (existingEntry.durationMinutes === 0) {
+            this.map.delete(key);
+        }
+
+        return true;
     }
 
     public entries() {
@@ -52,4 +78,14 @@ export class SpentTimes {
     }
 
     private readonly map = new Map<string, ISpentTime>();
+
+    private findExisting(entry: ISpentTime): [ string, ISpentTime | undefined ] {
+        const key = `${entry.date.getTime()}|${entry.title}|${entry.type}`;
+
+        return [ key, this.map.get(key) ];
+    }
+
+    private roundDuration(entry: ISpentTime) {
+        entry.durationMinutes = Math.round(entry.durationMinutes / this.roundingMinutes) * this.roundingMinutes;
+    }
 }
