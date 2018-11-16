@@ -51,7 +51,7 @@
             <td>{{ props.item.type }}</td>
             <td>{{ props.item.comment }}</td>
             <!-- Display duration in minutes, rounded to the next quarter hour. -->
-            <td class="text-xs-right">{{ Math.round(props.item.durationMinutes / 15) * 15 }}</td>
+            <td class="text-xs-right">{{ props.item.durationMinutes }}</td>
           </template>
         </v-data-table>          
       </v-layout>

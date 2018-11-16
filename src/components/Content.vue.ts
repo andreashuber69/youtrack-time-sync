@@ -15,7 +15,8 @@ import { read } from "xlsx";
 import { Model } from "../model/Model";
 import { ISpentTime } from "../model/SpentTimes";
 import { WorkBookParser } from "../model/WorkBookParser";
-import { YouTrackSpentTimes } from "../model/YouTrackSpentTimes";
+import { YouTrack } from "../model/YouTrack";
+import { YouTrackUtility } from "../model/YouTrackUtility";
 
 @Component
 // tslint:disable-next-line:no-default-export
@@ -91,18 +92,19 @@ export default class Content extends Vue {
 
         try {
             this.checkedModel.filename = files[0].name;
-            this.times =
-                WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" })).entries();
+            const excelSpentTimes =
+                WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
 
             // tslint:disable-next-line:no-null-keyword
             this.error = null;
 
+            // TODO: Network errors should not be displayed on the input for the Excel sheet
             if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
-                const youTrackTimes = new YouTrackSpentTimes(
-                    this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
-                const issueIds = new Set(this.times.filter((t) => t.title.includes("-")).map((t) => t.title));
-                const loggedTimes = await youTrackTimes.getSpentTimes([ ...issueIds ]);
+                const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
+                await YouTrackUtility.subtractYouTrackSpentTimes(excelSpentTimes, youTrack);
             }
+
+            this.times = excelSpentTimes.entries();
         } catch (e) {
             this.error = e instanceof Error ? e.toString() : "Unknown Error!";
             this.times.splice(0);

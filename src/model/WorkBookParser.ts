@@ -32,7 +32,7 @@ interface IRow {
 
 export class WorkBookParser {
     public static parse(workBook: WorkBook) {
-        const spentTimes = new SpentTimes();
+        const spentTimes = new SpentTimes(15);
 
         let containsOneOrMoreWeeks = false;
 
