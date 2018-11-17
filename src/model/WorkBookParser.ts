@@ -11,7 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { WorkBook, WorkSheet } from "xlsx";
-import { SpentTimes } from "./SpentTimes";
+import { ISpentTime } from "./SpentTimes";
 
 interface ICell<T> {
     readonly v: T;
@@ -31,23 +31,19 @@ interface IRow {
 }
 
 export class WorkBookParser {
-    public static parse(workBook: WorkBook) {
-        const spentTimes = new SpentTimes(15);
-
+    public static * parse(workBook: WorkBook): IterableIterator<ISpentTime> {
         let containsOneOrMoreWeeks = false;
 
         for (const sheetName of workBook.SheetNames) {
-            if (sheetName.startsWith("Week")) {
+            for (const time of this.parseSheet(workBook.Sheets[sheetName], sheetName)) {
                 containsOneOrMoreWeeks = true;
-                this.parseSheet(spentTimes, workBook.Sheets[sheetName], sheetName);
+                yield time;
             }
         }
 
         if (!containsOneOrMoreWeeks) {
             throw new Error("The selected workbook does not seem to contain any Week sheets.");
         }
-
-        return spentTimes;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,20 +55,27 @@ export class WorkBookParser {
     // The 0-based epoch therefore starts at 1899/12/30. Finally, the months in js are 0-based...
     private static readonly excelEpochStart = new Date(1899, 11, 30);
 
-    private static parseSheet(spentTimes: SpentTimes, sheet: WorkSheet, sheetName: string) {
-        const range = sheet["!ref"];
+    private static * parseSheet(sheet: WorkSheet, sheetName: string) {
+        if (sheetName.startsWith("Week")) {
 
-        if (!range) {
-            throw new Error(`The sheet ${sheetName} seems to be empty.`);
+            const range = sheet["!ref"];
+
+            if (!range) {
+                throw new Error(`The sheet ${sheetName} seems to be empty.`);
+            }
+
+            const dividerIndex = range.indexOf(":");
+            this.checkRange(dividerIndex < 0, sheetName, range);
+            const [ left, top ] = this.split(range.substring(0, dividerIndex), sheetName, range);
+            const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheetName, range);
+            const firstDataRow = 5;
+            this.checkRange(
+                (left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
+
+            for (const time of this.iterateRows(firstDataRow, bottom, sheetName, sheet)) {
+                yield time;
+            }
         }
-
-        const dividerIndex = range.indexOf(":");
-        this.checkRange(dividerIndex < 0, sheetName, range);
-        const [ left, top ] = this.split(range.substring(0, dividerIndex), sheetName, range);
-        const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheetName, range);
-        const firstDataRow = 5;
-        this.checkRange((left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
-        this.iterateRows(firstDataRow, bottom, spentTimes, sheetName, sheet);
     }
 
     private static checkRange(fail: boolean, sheetName: string, range: string) {
@@ -81,10 +84,9 @@ export class WorkBookParser {
         }
     }
 
-    private static iterateRows(
-        firstDataRow: number, bottom: number, spentTimes: SpentTimes, sheetName: string, sheet: WorkSheet) {
+    private static * iterateRows(firstDataRow: number, bottom: number, sheetName: string, sheet: WorkSheet) {
         for (let row = firstDataRow; row <= bottom; ++row) {
-            this.parseRow(spentTimes, {
+            const parsed = this.parseRow({
                 errorPrefix: `In sheet ${sheetName}, `,
                 // tslint:disable-next-line:object-literal-key-quotes
                 "row": row,
@@ -96,14 +98,18 @@ export class WorkBookParser {
                 type: sheet[`F${row}`] as ICell<number | string> | undefined,
                 comment: sheet[`G${row}`] as ICell<number | string> | undefined,
             });
+
+            if (parsed) {
+                yield parsed;
+            }
         }
     }
 
-    private static parseRow(spentTimes: SpentTimes, row: IRow) {
+    private static parseRow(row: IRow) {
         const period = this.getPeriod(row);
 
         if (!period) {
-            return;
+            return undefined;
         }
 
         const [ start, end ] = period;
@@ -115,7 +121,7 @@ export class WorkBookParser {
                 throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
             }
 
-            spentTimes.add({
+            return {
                 date: this.toDate(start.v),
                 // tslint:disable-next-line:object-literal-key-quotes
                 "title": title,
@@ -124,8 +130,10 @@ export class WorkBookParser {
                 // tslint:disable-next-line:object-literal-key-quotes
                 "isPaidAbsence": isPaidAbsence,
                 durationMinutes: spentTime * 24 * 60,
-            });
+            };
         }
+
+        return undefined;
     }
 
     private static split(corner: string, sheetName: string, range: string): [ string, number ] {

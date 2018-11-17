@@ -20,38 +20,33 @@ export interface ISpentTime {
 }
 
 export class SpentTimes {
-    public constructor(private readonly roundingMinutes: 1 | 5 | 10 | 15 | 30) {
-    }
+    public constructor(
+        excelTimes: IterableIterator<ISpentTime>, private readonly roundingMinutes: 1 | 5 | 10 | 15 | 30) {
+        for (const time of excelTimes) {
+            this.add(time);
+        }
 
-    public add(entry: ISpentTime) {
-        const [ key, existingEntry ] = this.findExisting(entry);
-
-        if (existingEntry) {
-            existingEntry.durationMinutes += entry.durationMinutes;
-            existingEntry.comment =
-                existingEntry.comment ? `${existingEntry.comment}\n${entry.comment}` : entry.comment;
-        } else {
-            this.map.set(key, entry);
+        for (const time of this.map.values()) {
+            this.roundDuration(time);
         }
     }
 
-    public subtract(entry: ISpentTime) {
-        const [ key, existingEntry ] = this.findExisting(entry);
+    public subtract(time: ISpentTime) {
+        const [ key, existingTime ] = this.findExisting(time);
 
-        if (!existingEntry) {
+        if (!existingTime) {
             return false;
         }
 
-        this.roundDuration(existingEntry);
-        this.roundDuration(entry);
+        this.roundDuration(time);
 
-        if (existingEntry.durationMinutes < entry.durationMinutes) {
+        if (existingTime.durationMinutes < time.durationMinutes) {
             return false;
         }
 
-        existingEntry.durationMinutes -= entry.durationMinutes;
+        existingTime.durationMinutes -= time.durationMinutes;
 
-        if (existingEntry.durationMinutes === 0) {
+        if (existingTime.durationMinutes === 0) {
             this.map.delete(key);
         }
 
@@ -79,13 +74,25 @@ export class SpentTimes {
 
     private readonly map = new Map<string, ISpentTime>();
 
-    private findExisting(entry: ISpentTime): [ string, ISpentTime | undefined ] {
-        const key = `${entry.date.getTime()}|${entry.title}|${entry.type}`;
+    private add(time: ISpentTime) {
+        const [ key, existingTime ] = this.findExisting(time);
+
+        if (existingTime) {
+            existingTime.durationMinutes += time.durationMinutes;
+            existingTime.comment =
+                existingTime.comment ? `${existingTime.comment}\n${time.comment}` : time.comment;
+        } else {
+            this.map.set(key, time);
+        }
+    }
+
+    private findExisting(time: ISpentTime): [ string, ISpentTime | undefined ] {
+        const key = `${time.date.getTime()}|${time.title}|${time.type}`;
 
         return [ key, this.map.get(key) ];
     }
 
-    private roundDuration(entry: ISpentTime) {
-        entry.durationMinutes = Math.round(entry.durationMinutes / this.roundingMinutes) * this.roundingMinutes;
+    private roundDuration(time: ISpentTime) {
+        time.durationMinutes = Math.round(time.durationMinutes / this.roundingMinutes) * this.roundingMinutes;
     }
 }
