@@ -13,7 +13,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { read } from "xlsx";
 import { Model } from "../model/Model";
-import { ISpentTime } from "../model/SpentTimes";
+import { ISpentTime, SpentTimes } from "../model/SpentTimes";
 import { WorkBookParser } from "../model/WorkBookParser";
 import { YouTrack } from "../model/YouTrack";
 import { YouTrackUtility } from "../model/YouTrackUtility";
@@ -92,8 +92,9 @@ export default class Content extends Vue {
 
         try {
             this.checkedModel.filename = files[0].name;
-            const excelSpentTimes =
+            const rawExcelSpentTimes =
                 WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
+            const excelSpentTimes = new SpentTimes(rawExcelSpentTimes, 15);
 
             // tslint:disable-next-line:no-null-keyword
             this.error = null;
