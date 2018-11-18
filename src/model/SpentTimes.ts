@@ -15,6 +15,7 @@ export interface ISpentTime {
     readonly title: string;
     readonly type?: string;
     readonly isPaidAbsence: boolean;
+    summary?: string;
     comment?: string;
     durationMinutes: number;
 }
@@ -23,7 +24,7 @@ export class SpentTimes {
     public constructor(
         excelTimes: IterableIterator<ISpentTime>, private readonly roundingMinutes: 1 | 5 | 10 | 15 | 30) {
         for (const time of excelTimes) {
-            this.add(time);
+            this.addSingle(time);
         }
 
         for (const time of this.map.values()) {
@@ -31,26 +32,14 @@ export class SpentTimes {
         }
     }
 
-    public subtract(time: ISpentTime) {
-        const [ key, existingTime ] = this.findExisting(time);
+    public uniqueTitles() {
+        return [ ...new Set([ ...this.map.values() ].map((time) => time.title)) ];
+    }
 
-        if (!existingTime) {
-            return false;
+    public subtract(youTrackTimes: IterableIterator<ISpentTime>) {
+        for (const youTrackTime of youTrackTimes) {
+            this.subtractSingle(youTrackTime);
         }
-
-        this.roundDuration(time);
-
-        if (existingTime.durationMinutes < time.durationMinutes) {
-            return false;
-        }
-
-        existingTime.durationMinutes -= time.durationMinutes;
-
-        if (existingTime.durationMinutes === 0) {
-            this.map.delete(key);
-        }
-
-        return true;
     }
 
     public entries() {
@@ -74,7 +63,7 @@ export class SpentTimes {
 
     private readonly map = new Map<string, ISpentTime>();
 
-    private add(time: ISpentTime) {
+    private addSingle(time: ISpentTime) {
         const [ key, existingTime ] = this.findExisting(time);
 
         if (existingTime) {
@@ -83,6 +72,23 @@ export class SpentTimes {
                 existingTime.comment ? `${existingTime.comment}\n${time.comment}` : time.comment;
         } else {
             this.map.set(key, time);
+        }
+    }
+
+    private subtractSingle(time: ISpentTime) {
+        const [ key, existingTime ] = this.findExisting(time);
+        this.roundDuration(time);
+
+        if (!existingTime || (existingTime.durationMinutes < time.durationMinutes)) {
+            const date = time.date.toLocaleDateString();
+            throw new Error(
+                `Spent time entries for issue ${time.title} on ${date} cannot be matched to the Excel sheet.`);
+        }
+
+        existingTime.durationMinutes -= time.durationMinutes;
+
+        if (existingTime.durationMinutes === 0) {
+            this.map.delete(key);
         }
     }
 

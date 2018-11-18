@@ -27,7 +27,6 @@ export interface IIssueWorkItem {
 
     issue: {
         id: string;
-        summary: string;
     };
 
     text: string;
@@ -56,7 +55,7 @@ export class YouTrack {
     public async getWorkItems(issueId: string) {
         const result = await this.get<IIssueWorkItem[]>(
             `youtrack/api/issues/${issueId}/timeTracking/workItems`,
-            [[ "fields", "creator(id),date,duration(minutes),issue(id,summary),text,type(name)" ]]);
+            [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]]);
 
         // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries in
         // the <string>-<number> and the <number>-<number> format. The following makes sure that the returned data will
@@ -66,6 +65,12 @@ export class YouTrack {
         }
 
         return result;
+    }
+
+    public async getWorkItemsForUser(user: IUser, issueIds: string[]) {
+        const workItemsArray = await Promise.all([ ...issueIds ].map((issueId) => this.getWorkItems(issueId)));
+
+        return workItemsArray.flat().filter((workItem) => workItem.creator.id === user.id);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

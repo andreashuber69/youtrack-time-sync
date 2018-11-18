@@ -94,7 +94,7 @@ export default class Content extends Vue {
             this.checkedModel.filename = files[0].name;
             const rawExcelSpentTimes =
                 WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
-            const excelSpentTimes = new SpentTimes(rawExcelSpentTimes, 15);
+            const spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
 
             // tslint:disable-next-line:no-null-keyword
             this.error = null;
@@ -102,10 +102,12 @@ export default class Content extends Vue {
             // TODO: Network errors should not be displayed on the input for the Excel sheet
             if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
                 const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
-                await YouTrackUtility.subtractYouTrackSpentTimes(excelSpentTimes, youTrack);
+                const issueIds = spentTimes.uniqueTitles().filter((title) => title.includes("-"));
+                const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
+                spentTimes.subtract(YouTrackUtility.convert(youTrackWorkItems.values()));
             }
 
-            this.times = excelSpentTimes.entries();
+            this.times = spentTimes.entries();
         } catch (e) {
             this.error = e instanceof Error ? e.toString() : "Unknown Error!";
             this.times.splice(0);
