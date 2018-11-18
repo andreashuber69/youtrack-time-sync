@@ -27,7 +27,7 @@ export default class Content extends Vue {
     public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
     public valid = false;
     // tslint:disable-next-line:no-null-keyword
-    public error: string | null = null;
+    public fileError: string | null = null;
 
     public timeHeaders = [
         { text: "Date", align: "left", sortable: false },
@@ -95,12 +95,12 @@ export default class Content extends Vue {
         try {
             this.checkedModel.filename = files[0].name;
             // tslint:disable-next-line:no-null-keyword
-            this.error = null;
+            this.fileError = null;
             const rawExcelSpentTimes =
                 WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
             spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
         } catch (e) {
-            this.error = e instanceof Error && e.toString() || "Unknown Error!";
+            this.fileError = e instanceof Error && e.toString() || "Unknown Error!";
             this.times.splice(0);
 
             return;
