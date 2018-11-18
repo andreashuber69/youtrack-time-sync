@@ -32,11 +32,12 @@ export default class Content extends Vue {
     public fileError: string | null = null;
 
     public timeHeaders = [
-        { text: "Date", align: "left", sortable: false },
-        { text: "Title", align: "left", sortable: false },
-        { text: "Type", align: "left", sortable: false },
-        { text: "Comment", align: "left", sortable: false },
-        { text: "Spent Time (Minutes)", align: "right", sortable: false },
+        { text: "Date", sortable: false },
+        { text: "Title", sortable: false },
+        { text: "Summary", sortable: false },
+        { text: "Type", sortable: false },
+        { text: "Comment", sortable: false },
+        { text: "Spent Time (Hours)", align: "right", sortable: false },
     ];
 
     // tslint:disable-next-line:no-null-keyword
@@ -111,6 +112,7 @@ export default class Content extends Vue {
         }
 
         await this.subtractYouTrackSpentTimes(spentTimes);
+        this.times = spentTimes.entries();
     }
 
     private async subtractYouTrackSpentTimes(spentTimes: SpentTimes) {
@@ -126,7 +128,6 @@ export default class Content extends Vue {
             const issueIds = spentTimes.uniqueTitles().filter((title) => title.includes("-"));
             const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
             spentTimes.subtract(YouTrackUtility.convert(youTrackWorkItems.values()));
-            this.times = spentTimes.entries();
         } catch (e) {
             this.networkError = this.getErrorMessage(e);
         }
