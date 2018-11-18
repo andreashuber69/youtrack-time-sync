@@ -13,7 +13,7 @@
 import { ISpentTime } from "./SpentTimes";
 import { IIssueWorkItem } from "./YouTrack";
 
-export class YouTrackUtility {
+export class SpentTimeUtility {
     public static * convert(workItems: IterableIterator<IIssueWorkItem>): IterableIterator<ISpentTime> {
         for (const workItem of workItems) {
             yield {
