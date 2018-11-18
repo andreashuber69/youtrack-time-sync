@@ -53,9 +53,15 @@ export class YouTrack {
     }
 
     public async getWorkItems(issueId: string) {
-        const result = await this.get<IIssueWorkItem[]>(
-            `youtrack/api/issues/${issueId}/timeTracking/workItems`,
-            [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]]);
+        let result: IIssueWorkItem[];
+
+        try {
+            result = await this.get<IIssueWorkItem[]>(
+                `youtrack/api/issues/${issueId}/timeTracking/workItems`,
+                [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]]);
+        } catch (e) {
+            throw new Error(`Failed to get work items for ${issueId}: ${e instanceof Error && e.message || e}`);
+        }
 
         // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries in
         // the <string>-<number> and the <number>-<number> format. The following makes sure that the returned data will
