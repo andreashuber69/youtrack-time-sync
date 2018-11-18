@@ -49,7 +49,7 @@ export default class Content extends Vue {
 
     public async onFileInputChanged(event: Event) {
         try {
-            await this.onFileInputChangedImpl((event.target as any).files as FileList);
+            this.times = await this.onFileInputChangedImpl((event.target as any).files as FileList);
         } finally {
             this.fileInput.value = "";
         }
@@ -75,6 +75,10 @@ export default class Content extends Vue {
         });
     }
 
+    private static getErrorMessage(e: any) {
+        return e instanceof Error && e.toString() || "Unknown Error!";
+    }
+
     private get checkedModel() {
         if (!this.model) {
             throw new Error("No model set!");
@@ -91,28 +95,27 @@ export default class Content extends Vue {
     private async onFileInputChangedImpl(files: FileList) {
         // tslint:disable-next-line:no-null-keyword
         this.fileError = null;
+        this.checkedModel.filename = files[0].name;
 
         if (files.length !== 1) {
-            return;
+            return [];
         }
 
         let spentTimes: SpentTimes;
 
         try {
-            this.checkedModel.filename = files[0].name;
             // tslint:disable-next-line:no-null-keyword
             this.fileError = null;
             const rawExcelSpentTimes =
                 WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
             spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
         } catch (e) {
-            this.fileError = this.getErrorMessage(e);
+            this.fileError = Content.getErrorMessage(e);
 
-            return;
+            return [];
         }
 
-        await this.subtractYouTrackSpentTimes(spentTimes);
-        this.times = spentTimes.entries();
+        return this.subtractYouTrackSpentTimes(spentTimes);
     }
 
     private async subtractYouTrackSpentTimes(spentTimes: SpentTimes) {
@@ -120,7 +123,7 @@ export default class Content extends Vue {
         this.networkError = null;
 
         if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.token) {
-            return;
+            return [];
         }
 
         try {
@@ -128,14 +131,12 @@ export default class Content extends Vue {
             const issueIds = spentTimes.uniqueTitles().filter((title) => title.includes("-"));
             const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
             spentTimes.subtract(YouTrackUtility.convert(youTrackWorkItems.values()));
+
+            return spentTimes.entries();
         } catch (e) {
-            this.networkError = this.getErrorMessage(e);
+            this.networkError = Content.getErrorMessage(e);
+
+            return [];
         }
-    }
-
-    private getErrorMessage(e: any) {
-        this.times.splice(0);
-
-        return e instanceof Error && e.toString() || "Unknown Error!";
     }
 }
