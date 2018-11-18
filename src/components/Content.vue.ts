@@ -92,25 +92,25 @@ export default class Content extends Vue {
 
         try {
             this.checkedModel.filename = files[0].name;
+            // tslint:disable-next-line:no-null-keyword
+            this.error = null;
             const rawExcelSpentTimes =
                 WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
             const spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
-
-            // tslint:disable-next-line:no-null-keyword
-            this.error = null;
-
-            // TODO: Network errors should not be displayed on the input for the Excel sheet
-            if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
-                const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
-                const issueIds = spentTimes.uniqueTitles().filter((title) => title.includes("-"));
-                const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
-                spentTimes.subtract(YouTrackUtility.convert(youTrackWorkItems.values()));
-            }
-
+            await this.subtractYouTrackSpentTimes(spentTimes);
             this.times = spentTimes.entries();
         } catch (e) {
-            this.error = e instanceof Error ? e.toString() : "Unknown Error!";
+            this.error = e instanceof Error && e.toString() || "Unknown Error!";
             this.times.splice(0);
+        }
+    }
+
+    private async subtractYouTrackSpentTimes(spentTimes: SpentTimes) {
+        if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
+            const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
+            const issueIds = spentTimes.uniqueTitles().filter((title) => title.includes("-"));
+            const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
+            spentTimes.subtract(YouTrackUtility.convert(youTrackWorkItems.values()));
         }
     }
 }
