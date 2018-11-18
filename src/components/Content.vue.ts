@@ -90,19 +90,24 @@ export default class Content extends Vue {
             return;
         }
 
+        let spentTimes: SpentTimes;
+
         try {
             this.checkedModel.filename = files[0].name;
             // tslint:disable-next-line:no-null-keyword
             this.error = null;
             const rawExcelSpentTimes =
                 WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
-            const spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
-            await this.subtractYouTrackSpentTimes(spentTimes);
-            this.times = spentTimes.entries();
+            spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
         } catch (e) {
             this.error = e instanceof Error && e.toString() || "Unknown Error!";
             this.times.splice(0);
+
+            return;
         }
+
+        await this.subtractYouTrackSpentTimes(spentTimes);
+        this.times = spentTimes.entries();
     }
 
     private async subtractYouTrackSpentTimes(spentTimes: SpentTimes) {
