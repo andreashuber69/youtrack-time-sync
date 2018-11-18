@@ -10,11 +10,55 @@
 // You should have received a copy of the GNU General Public License along with this program. If not, see
 // <http://www.gnu.org/licenses/>.
 
-import { ISpentTime } from "./SpentTimes";
-import { IIssueWorkItem } from "./YouTrack";
+import { read } from "xlsx";
+import { ISpentTime, SpentTimes } from "./SpentTimes";
+import { WorkBookParser } from "./WorkBookParser";
+import { IIssueWorkItem, YouTrack } from "./YouTrack";
+
+interface IErrors {
+    fileError: string | null;
+    networkError: string | null;
+}
 
 export class SpentTimeUtility {
-    public static * convert(workItems: IterableIterator<IIssueWorkItem>): IterableIterator<ISpentTime> {
+    public static async getUnreportedSpentTime(excelFile: File, youTrack: YouTrack, errors: IErrors) {
+        // tslint:disable-next-line:no-null-keyword
+        errors.fileError = null;
+        let spentTimes: SpentTimes;
+
+        try {
+            const rawExcelSpentTimes =
+                WorkBookParser.parse(read(new Uint8Array(await this.read(excelFile)), { type: "array" }));
+            spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
+        } catch (e) {
+            errors.fileError = this.getErrorMessage(e);
+
+            return [];
+        }
+
+        return this.subtractYouTrackSpentTimes(spentTimes, youTrack, errors);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static async subtractYouTrackSpentTimes(spentTimes: SpentTimes, youTrack: YouTrack, errors: IErrors) {
+        // tslint:disable-next-line:no-null-keyword
+        errors.networkError = null;
+
+        try {
+            const issueIds = spentTimes.uniqueTitles();
+            const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
+            spentTimes.subtract(this.convert(youTrackWorkItems.values()));
+
+            return spentTimes.entries();
+        } catch (e) {
+            errors.networkError = this.getErrorMessage(e);
+
+            return [];
+        }
+    }
+
+    private static * convert(workItems: IterableIterator<IIssueWorkItem>): IterableIterator<ISpentTime> {
         for (const workItem of workItems) {
             yield {
                 date: new Date(workItem.date),
@@ -25,5 +69,18 @@ export class SpentTimeUtility {
                 durationMinutes: workItem.duration.minutes,
             };
         }
+    }
+
+    private static read(blob: Blob) {
+        return new Promise<ArrayBuffer>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => resolve(reader.result as ArrayBuffer);
+            reader.onerror = (ev) => reject("Unable to read file.");
+            reader.readAsArrayBuffer(blob);
+        });
+    }
+
+    private static getErrorMessage(e: any) {
+        return e instanceof Error && e.toString() || "Unknown Error!";
     }
 }

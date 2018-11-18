@@ -66,19 +66,6 @@ export default class Content extends Vue {
         return !!value || "A value is required.";
     }
 
-    private static read(blob: Blob) {
-        return new Promise<ArrayBuffer>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (ev) => resolve(reader.result as ArrayBuffer);
-            reader.onerror = (ev) => reject("Unable to read file.");
-            reader.readAsArrayBuffer(blob);
-        });
-    }
-
-    private static getErrorMessage(e: any) {
-        return e instanceof Error && e.toString() || "Unknown Error!";
-    }
-
     private get checkedModel() {
         if (!this.model) {
             throw new Error("No model set!");
@@ -93,50 +80,17 @@ export default class Content extends Vue {
     }
 
     private async onFileInputChangedImpl(files: FileList) {
-        // tslint:disable-next-line:no-null-keyword
-        this.fileError = null;
-        this.checkedModel.filename = files[0].name;
-
         if (files.length !== 1) {
             return [];
         }
 
-        let spentTimes: SpentTimes;
-
-        try {
-            // tslint:disable-next-line:no-null-keyword
-            this.fileError = null;
-            const rawExcelSpentTimes =
-                WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
-            spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
-        } catch (e) {
-            this.fileError = Content.getErrorMessage(e);
-
-            return [];
-        }
-
-        return this.subtractYouTrackSpentTimes(spentTimes);
-    }
-
-    private async subtractYouTrackSpentTimes(spentTimes: SpentTimes) {
-        // tslint:disable-next-line:no-null-keyword
-        this.networkError = null;
+        this.checkedModel.filename = files[0].name;
 
         if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.token) {
             return [];
         }
 
-        try {
-            const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
-            const issueIds = spentTimes.uniqueTitles();
-            const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
-            spentTimes.subtract(SpentTimeUtility.convert(youTrackWorkItems.values()));
-
-            return spentTimes.entries();
-        } catch (e) {
-            this.networkError = Content.getErrorMessage(e);
-
-            return [];
-        }
+        return SpentTimeUtility.getUnreportedSpentTime(
+            files[0], new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token), this);
     }
 }
