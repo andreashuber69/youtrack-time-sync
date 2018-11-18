@@ -121,16 +121,18 @@ export class WorkBookParser {
                 throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
             }
 
-            return {
-                date: this.toDate(start.v),
-                // tslint:disable-next-line:object-literal-key-quotes
-                "title": title,
-                type: row.type && row.type.v.toString() || undefined,
-                comment: row.comment && row.comment.v.toString() || undefined,
-                // tslint:disable-next-line:object-literal-key-quotes
-                "isPaidAbsence": isPaidAbsence,
-                durationMinutes: spentTime * 24 * 60,
-            };
+            if (title.includes("-")) {
+                return {
+                    date: this.toDate(start.v),
+                    // tslint:disable-next-line:object-literal-key-quotes
+                    "title": title,
+                    type: row.type && row.type.v.toString() || undefined,
+                    comment: row.comment && row.comment.v.toString() || undefined,
+                    // tslint:disable-next-line:object-literal-key-quotes
+                    "isPaidAbsence": isPaidAbsence,
+                    durationMinutes: spentTime * 24 * 60,
+                };
+            }
         }
 
         return undefined;

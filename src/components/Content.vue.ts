@@ -14,9 +14,9 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { read } from "xlsx";
 import { Model } from "../model/Model";
 import { ISpentTime, SpentTimes } from "../model/SpentTimes";
+import { SpentTimeUtility } from "../model/SpentTimeUtility";
 import { WorkBookParser } from "../model/WorkBookParser";
 import { YouTrack } from "../model/YouTrack";
-import { YouTrackUtility } from "../model/YouTrackUtility";
 
 @Component
 // tslint:disable-next-line:no-default-export
@@ -128,9 +128,9 @@ export default class Content extends Vue {
 
         try {
             const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
-            const issueIds = spentTimes.uniqueTitles().filter((title) => title.includes("-"));
+            const issueIds = spentTimes.uniqueTitles();
             const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
-            spentTimes.subtract(YouTrackUtility.convert(youTrackWorkItems.values()));
+            spentTimes.subtract(SpentTimeUtility.convert(youTrackWorkItems.values()));
 
             return spentTimes.entries();
         } catch (e) {
