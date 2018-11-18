@@ -48,10 +48,10 @@
           <template slot="items" slot-scope="props">
             <td>{{ props.item.date.toLocaleDateString() }}</td>
             <td>{{ props.item.title }}</td>
+            <td>{{ props.item.summary }}
             <td>{{ props.item.type }}</td>
             <td>{{ props.item.comment }}</td>
-            <!-- Display duration in minutes, rounded to the next quarter hour. -->
-            <td class="text-xs-right">{{ props.item.durationMinutes }}</td>
+            <td class="text-xs-right">{{ (props.item.durationMinutes / 60).toFixed(2) }}</td>
           </template>
         </v-data-table>          
       </v-layout>
