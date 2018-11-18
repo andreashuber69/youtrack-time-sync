@@ -60,7 +60,8 @@ export class YouTrack {
                 `youtrack/api/issues/${issueId}/timeTracking/workItems`,
                 [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]]);
         } catch (e) {
-            throw new Error(`Failed to get work items for ${issueId}: ${e instanceof Error && e.message || e}`);
+            throw new Error(
+                `Failed to get work items for issue id "${issueId}": ${e instanceof Error && e.message || e}`);
         }
 
         // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries in
