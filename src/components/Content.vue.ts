@@ -23,9 +23,11 @@ import { YouTrackUtility } from "../model/YouTrackUtility";
 export default class Content extends Vue {
     @Prop()
     public model?: Model;
-    public showToken = false;
-    public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
     public valid = false;
+    public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
+    // tslint:disable-next-line:no-null-keyword
+    public networkError: string | null = null;
+    public showToken = false;
     // tslint:disable-next-line:no-null-keyword
     public fileError: string | null = null;
 
@@ -86,6 +88,9 @@ export default class Content extends Vue {
     }
 
     private async onFileInputChangedImpl(files: FileList) {
+        // tslint:disable-next-line:no-null-keyword
+        this.fileError = null;
+
         if (files.length !== 1) {
             return;
         }
@@ -100,22 +105,36 @@ export default class Content extends Vue {
                 WorkBookParser.parse(read(new Uint8Array(await Content.read(files[0])), { type: "array" }));
             spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
         } catch (e) {
-            this.fileError = e instanceof Error && e.toString() || "Unknown Error!";
-            this.times.splice(0);
+            this.fileError = this.getErrorMessage(e);
 
             return;
         }
 
         await this.subtractYouTrackSpentTimes(spentTimes);
-        this.times = spentTimes.entries();
     }
 
     private async subtractYouTrackSpentTimes(spentTimes: SpentTimes) {
-        if (this.checkedModel.youTrackBaseUrl && this.checkedModel.token) {
+        // tslint:disable-next-line:no-null-keyword
+        this.networkError = null;
+
+        if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.token) {
+            return;
+        }
+
+        try {
             const youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
             const issueIds = spentTimes.uniqueTitles().filter((title) => title.includes("-"));
             const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
             spentTimes.subtract(YouTrackUtility.convert(youTrackWorkItems.values()));
+            this.times = spentTimes.entries();
+        } catch (e) {
+            this.networkError = this.getErrorMessage(e);
         }
+    }
+
+    private getErrorMessage(e: any) {
+        this.times.splice(0);
+
+        return e instanceof Error && e.toString() || "Unknown Error!";
     }
 }
