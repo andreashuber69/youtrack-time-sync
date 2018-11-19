@@ -48,9 +48,13 @@
           <template slot="items" slot-scope="props">
             <td>{{ props.item.date.toLocaleDateString() }}</td>
             <td>{{ props.item.title }}</td>
-            <td>{{ props.item.summary }}
+            <td style="max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">
+              {{ props.item.summary }}
+            </td>
             <td>{{ props.item.type }}</td>
-            <td>{{ props.item.comment }}</td>
+            <td style="max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">
+              {{ props.item.comment }}
+            </td>
             <td class="text-xs-right">{{ (props.item.durationMinutes / 60).toFixed(2) }}</td>
           </template>
         </v-data-table>          

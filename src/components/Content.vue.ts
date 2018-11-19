@@ -33,7 +33,7 @@ export default class Content extends Vue {
 
     public timeHeaders = [
         { text: "Date", sortable: false },
-        { text: "Title", sortable: false },
+        { text: "ID", sortable: false },
         { text: "Summary", sortable: false },
         { text: "Type", sortable: false },
         { text: "Comment", sortable: false },

@@ -11,28 +11,33 @@
 // <http://www.gnu.org/licenses/>.
 
 export interface IUser {
+    readonly id: string;
+}
+
+export interface IIssue {
     id: string;
+    readonly summary: string;
 }
 
 export interface IIssueWorkItem {
-    creator: {
+    readonly creator: {
+        readonly id: string;
+    };
+
+    readonly date: number;
+
+    readonly duration: {
+        readonly minutes: number;
+    };
+
+    readonly issue: {
         id: string;
     };
 
-    date: number;
+    readonly text: string;
 
-    duration: {
-        minutes: number;
-    };
-
-    issue: {
-        id: string;
-    };
-
-    text: string;
-
-    type: {
-        name: string;
+    readonly type: {
+        readonly name: string;
     };
 }
 
@@ -52,6 +57,27 @@ export class YouTrack {
         return this.get<IUser>("youtrack/api/admin/users/me");
     }
 
+    public async getIssue(issueId: string) {
+        try {
+            return await this.get<IIssue>(`youtrack/api/issues/${issueId}`, [[ "fields", "id,summary" ]]);
+        } catch (e) {
+            throw new Error(`Failed to get issue id "${issueId}": ${e instanceof Error && e.message || e}`);
+        }
+    }
+
+    public async getIssues(issueIds: string[]) {
+        const result = await Promise.all([ ...issueIds ].map((issueId) => this.getIssue(issueId)));
+
+        // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries in
+        // the <string>-<number> and the <number>-<number> format. The following makes sure that the returned data will
+        // always refer to the issueId passed to this method.
+        for (let index = 0; index < issueIds.length; ++index) {
+            result[index].id = issueIds[index];
+        }
+
+        return result;
+    }
+
     public async getWorkItems(issueId: string) {
         let result: IIssueWorkItem[];
 
@@ -64,9 +90,6 @@ export class YouTrack {
                 `Failed to get work items for issue id "${issueId}": ${e instanceof Error && e.message || e}`);
         }
 
-        // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries in
-        // the <string>-<number> and the <number>-<number> format. The following makes sure that the returned data will
-        // always refer to the issueId passed to this method.
         for (const workItem of result) {
             workItem.issue.id = issueId;
         }
