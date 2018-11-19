@@ -13,7 +13,7 @@
 import { read } from "xlsx";
 import { ISpentTime, SpentTimes } from "./SpentTimes";
 import { WorkBookParser } from "./WorkBookParser";
-import { IIssueWorkItem, YouTrack } from "./YouTrack";
+import { IIssue, IIssueWorkItem, YouTrack } from "./YouTrack";
 
 interface IErrors {
     fileError: string | null;
@@ -44,18 +44,27 @@ export class SpentTimeUtility {
     private static async subtractYouTrackSpentTimes(spentTimes: SpentTimes, youTrack: YouTrack, errors: IErrors) {
         // tslint:disable-next-line:no-null-keyword
         errors.networkError = null;
+        let issues: IIssue[];
 
         try {
             const issueIds = spentTimes.uniqueTitles();
             const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
             spentTimes.subtract(this.convert(youTrackWorkItems.values()));
-
-            return spentTimes.entries();
+            issues = await youTrack.getIssues(spentTimes.uniqueTitles());
         } catch (e) {
             errors.networkError = this.getErrorMessage(e);
 
             return [];
         }
+
+        const result = spentTimes.entries();
+
+        for (const spentTime of result) {
+            const issue = issues.find((i) => i.id === spentTime.title);
+            spentTime.summary = issue && issue.summary;
+        }
+
+        return result;
     }
 
     private static * convert(workItems: IterableIterator<IIssueWorkItem>): IterableIterator<ISpentTime> {
