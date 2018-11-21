@@ -11,11 +11,9 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { read } from "xlsx";
 import { Model } from "../model/Model";
-import { ISpentTime, SpentTimes } from "../model/SpentTimes";
+import { ISpentTime } from "../model/SpentTimes";
 import { SpentTimeUtility } from "../model/SpentTimeUtility";
-import { WorkBookParser } from "../model/WorkBookParser";
 import { YouTrack } from "../model/YouTrack";
 
 @Component
@@ -56,8 +54,22 @@ export default class Content extends Vue {
     }
 
     // tslint:disable-next-line:prefer-function-over-method
-    public onSubmitClicked(event: MouseEvent) {
-        // Whatever
+    public async onSubmitClicked(event: MouseEvent) {
+        if (!this.youTrack) {
+            throw new Error("youTrack is not set.");
+        }
+
+        for (const spentTime of this.times) {
+            const workItem = await this.youTrack.createWorkItem(spentTime.title, {
+                date: spentTime.date.getTime(),
+                duration: {
+                    minutes: spentTime.durationMinutes,
+                },
+                text: spentTime.comment || undefined,
+                type: spentTime.type && { name: spentTime.type } || undefined,
+            });
+            workItem.toString();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,6 +77,8 @@ export default class Content extends Vue {
     private static requiredRule(value: unknown) {
         return !!value || "A value is required.";
     }
+
+    private youTrack: YouTrack | undefined;
 
     private get checkedModel() {
         if (!this.model) {
@@ -90,7 +104,8 @@ export default class Content extends Vue {
             return [];
         }
 
-        return SpentTimeUtility.getUnreportedSpentTime(
-            files[0], new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token), this);
+        this.youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
+
+        return SpentTimeUtility.getUnreportedSpentTime(files[0], this.youTrack, this);
     }
 }
