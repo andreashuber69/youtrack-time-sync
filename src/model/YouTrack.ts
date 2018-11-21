@@ -41,6 +41,20 @@ export interface IIssueWorkItem {
     };
 }
 
+export interface ICreateIssueWorkItem {
+    readonly date: number;
+
+    readonly duration: {
+        readonly minutes: number;
+    };
+
+    readonly text?: string;
+
+    readonly type?: {
+        readonly name?: string;
+    };
+}
+
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
 export class YouTrack {
@@ -59,32 +73,28 @@ export class YouTrack {
 
     public async getIssue(issueId: string) {
         try {
-            return await this.get<IIssue>(`youtrack/api/issues/${issueId}`, [[ "fields", "id,summary" ]]);
+            const issue = await this.get<IIssue>(`youtrack/api/issues/${issueId}`, [[ "fields", "id,summary" ]]);
+
+            // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries
+            // in the <string>-<number> and the <number>-<number> format. The following makes sure that the returned
+            // data will always refer to the issueId passed to this method.
+            issue.id = issueId;
+
+            return issue;
         } catch (e) {
             throw new Error(`Failed to get issue id "${issueId}": ${e instanceof Error && e.message || e}`);
         }
     }
 
-    public async getIssues(issueIds: string[]) {
-        const result = await Promise.all([ ...issueIds ].map((issueId) => this.getIssue(issueId)));
-
-        // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries in
-        // the <string>-<number> and the <number>-<number> format. The following makes sure that the returned data will
-        // always refer to the issueId passed to this method.
-        for (let index = 0; index < issueIds.length; ++index) {
-            result[index].id = issueIds[index];
-        }
-
-        return result;
+    public getIssues(issueIds: string[]) {
+        return Promise.all([ ...issueIds ].map((issueId) => this.getIssue(issueId)));
     }
 
     public async getWorkItems(issueId: string) {
         let result: IIssueWorkItem[];
 
         try {
-            result = await this.get<IIssueWorkItem[]>(
-                `youtrack/api/issues/${issueId}/timeTracking/workItems`,
-                [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]]);
+            result = await this.get<IIssueWorkItem[]>(YouTrack.getWorkItemsPath(issueId), YouTrack.workItemsParams);
         } catch (e) {
             throw new Error(
                 `Failed to get work items for issue id "${issueId}": ${e instanceof Error && e.message || e}`);
@@ -103,12 +113,28 @@ export class YouTrack {
         return workItemsArray.flat().filter((workItem) => workItem.creator.id === user.id);
     }
 
+    public createWorkItem(issueId: string, workItem: ICreateIssueWorkItem) {
+        return this.post<IIssueWorkItem>(
+            YouTrack.getWorkItemsPath(issueId), undefined, JSON.stringify(workItem));
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static readonly workItemsParams: [[ string, string ]] =
+        [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]];
+
+    private static getWorkItemsPath(issueId: string) {
+        return `youtrack/api/issues/${issueId}/timeTracking/workItems`;
+    }
 
     private readonly headersInit: Headers;
 
     private get<T>(path: string, params?: Array<[ string, string ]>) {
         return this.fetch<T>(path, "GET", params);
+    }
+
+    private post<T>(path: string, params?: Array<[ string, string ]>, body?: unknown) {
+        return this.fetch<T>(path, "POST", params, body);
     }
 
     private async fetch<T>(
