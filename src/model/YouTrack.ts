@@ -110,7 +110,8 @@ export class YouTrack {
     public async getWorkItemsForUser(user: IUser, issueIds: string[]) {
         const workItemsArray = await Promise.all([ ...issueIds ].map((issueId) => this.getWorkItems(issueId)));
 
-        return workItemsArray.flat().filter((workItem) => workItem.creator.id === user.id);
+        return new Array<IIssueWorkItem>().concat(...workItemsArray).filter(
+            (workItem) => workItem.creator.id === user.id);
     }
 
     public createWorkItem(issueId: string, workItem: ICreateIssueWorkItem) {
