@@ -19,7 +19,8 @@
         <v-flex xs12>
           <v-text-field
             label="YouTrack Base URL" hint="Example: 'https://company.myjetbrains.com"
-            v-model="model.youTrackBaseUrl" required :autofocus="focusUrl" :rules="rules" :error-messages="networkError">
+            v-model="model.youTrackBaseUrl" required :autofocus="focusUrl" :rules="rules"
+            :error-messages="networkError">
           </v-text-field>
         </v-flex>
         <v-flex xs12>
@@ -33,8 +34,8 @@
         <v-flex xs12>
           <v-text-field
             label="Excel File"
-            v-model="model.filename" required readonly :rules="rules" :error-messages="fileError"
-            append-icon="open_in_browser" @click:append="onOpenClicked">
+            v-model="model.filename" required readonly :disabled="disableFile" :rules="rules"
+            :error-messages="fileError" append-icon="open_in_browser" @click:append="onOpenClicked">
           </v-text-field>
           <input
             ref="fileInput" type="file" :accept="model.fileExtension"
