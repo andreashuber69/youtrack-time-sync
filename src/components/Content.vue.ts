@@ -35,7 +35,7 @@ export default class Content extends Vue {
         { text: "Summary", sortable: false },
         { text: "Type", sortable: false },
         { text: "Comment", sortable: false },
-        { text: "Spent Time (Hours)", align: "right", sortable: false },
+        { text: "Spent Time", align: "right", sortable: false },
     ];
 
     // tslint:disable-next-line:no-null-keyword
