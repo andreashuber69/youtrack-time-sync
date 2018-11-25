@@ -85,7 +85,7 @@ export class SpentTimes {
         if (!existingTime || (existingTime.durationMinutes < time.durationMinutes)) {
             const date = time.date.toLocaleDateString();
             throw new Error(
-                `Spent time entries for issue ${time.title} on ${date} cannot be matched to the Excel sheet.`);
+                `Spent time entries for issue ${time.title} on ${date} cannot be matched to the Excel file.`);
         }
 
         existingTime.durationMinutes -= time.durationMinutes;
