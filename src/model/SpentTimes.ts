@@ -43,12 +43,7 @@ export class SpentTimes {
     }
 
     public entries() {
-        const result = new Array<ISpentTime>();
-
-        for (const spentTime of this.map.values()) {
-            result.push(spentTime);
-        }
-
+        const result = [ ...this.map.values() ];
         result.sort((left, right) => SpentTimes.compare(left, right));
 
         return result;
