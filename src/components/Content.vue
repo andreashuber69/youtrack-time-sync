@@ -19,13 +19,13 @@
         <v-flex xs12>
           <v-text-field
             label="YouTrack Base URL" hint="Example: 'https://company.myjetbrains.com"
-            v-model="model.youTrackBaseUrl" required :rules="rules" :error-messages="networkError">
+            v-model="model.youTrackBaseUrl" required :autofocus="focusUrl" :rules="rules" :error-messages="networkError">
           </v-text-field>
         </v-flex>
         <v-flex xs12>
           <v-text-field
             label="YouTrack Authentication Token" hint="Example: 'perm:QUhV.VGVzdDI=.6fRv9xZztORX9LquKaXJHxf5lsKyoO'"
-            v-model="model.token" required :rules="rules" :error-messages="networkError"
+            v-model="model.youTrackToken" required :autofocus="focusToken" :rules="rules" :error-messages="networkError"
             :append-icon="showToken ? 'visibility_off' : 'visibility'" :type="showToken ? 'text' : 'password'"
             @click:append="showToken = !showToken">
           </v-text-field>
