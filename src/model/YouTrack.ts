@@ -115,8 +115,7 @@ export class YouTrack {
     }
 
     public createWorkItem(issueId: string, workItem: ICreateIssueWorkItem) {
-        return this.post<IIssueWorkItem>(
-            YouTrack.getWorkItemsPath(issueId), undefined, JSON.stringify(workItem));
+        return this.post<IIssueWorkItem>(YouTrack.getWorkItemsPath(issueId), YouTrack.workItemsParams, workItem);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
