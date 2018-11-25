@@ -55,21 +55,7 @@ export default class Content extends Vue {
 
     // tslint:disable-next-line:prefer-function-over-method
     public async onSubmitClicked(event: MouseEvent) {
-        if (!this.youTrack) {
-            throw new Error("youTrack is not set.");
-        }
-
-        for (const spentTime of this.times) {
-            const workItem = await this.youTrack.createWorkItem(spentTime.title, {
-                date: spentTime.date.getTime(),
-                duration: {
-                    minutes: spentTime.durationMinutes,
-                },
-                text: spentTime.comment || undefined,
-                type: spentTime.type && { name: spentTime.type } || undefined,
-            });
-            workItem.toString();
-        }
+        await Promise.all(this.times.map((spentTime) => this.createWorkItem(spentTime)));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,5 +93,20 @@ export default class Content extends Vue {
         this.youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
 
         return SpentTimeUtility.getUnreportedSpentTime(files[0], this.youTrack, this);
+    }
+
+    private createWorkItem(spentTime: ISpentTime) {
+        if (!this.youTrack) {
+            throw new Error("youTrack is not set.");
+        }
+
+        return this.youTrack.createWorkItem(spentTime.title, {
+            date: spentTime.date.getTime(),
+            duration: {
+                minutes: spentTime.durationMinutes,
+            },
+            text: spentTime.comment || undefined,
+            type: spentTime.type && { name: spentTime.type } || undefined,
+        });
     }
 }
