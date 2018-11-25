@@ -68,8 +68,11 @@ export class SpentTimes {
 
         if (existingTime) {
             existingTime.durationMinutes += time.durationMinutes;
-            existingTime.comment =
-                existingTime.comment ? `${existingTime.comment}\n${time.comment}` : time.comment;
+
+            if (time.comment) {
+                existingTime.comment =
+                    existingTime.comment ? `${existingTime.comment}\n${time.comment}` : time.comment;
+            }
         } else {
             this.map.set(key, time);
         }
