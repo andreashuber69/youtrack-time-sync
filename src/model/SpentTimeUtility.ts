@@ -28,7 +28,7 @@ export class SpentTimeUtility {
     public async subtractExistingSpentTimes(youTrack: YouTrack) {
         const issueIds = this.spentTimes.uniqueTitles();
         const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
-        this.subtractNewSpentTimes(youTrackWorkItems.values());
+        this.subtractNewSpentTimes(youTrackWorkItems);
         const issues = await youTrack.getIssues(this.spentTimes.uniqueTitles());
         const result = this.spentTimes.entries();
 
@@ -40,7 +40,7 @@ export class SpentTimeUtility {
         return result;
     }
 
-    public subtractNewSpentTimes(spentTimes: IterableIterator<IIssueWorkItem>) {
+    public subtractNewSpentTimes(spentTimes: IIssueWorkItem[]) {
         this.spentTimes.subtract(SpentTimeUtility.convert(spentTimes));
 
         return this.spentTimes.entries();
@@ -48,7 +48,7 @@ export class SpentTimeUtility {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static * convert(workItems: IterableIterator<IIssueWorkItem>): IterableIterator<ISpentTime> {
+    private static * convert(workItems: IIssueWorkItem[]): IterableIterator<ISpentTime> {
         for (const workItem of workItems) {
             yield {
                 date: new Date(workItem.date),
