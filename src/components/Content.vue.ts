@@ -31,10 +31,15 @@ export default class Content extends Vue {
         return !this.focusUrl && !this.checkedModel.youTrackToken;
     }
 
+    public showToken = false;
+
+    public get disableFile() {
+        return !this.checkedModel.youTrackBaseUrl || !this.checkedModel.youTrackToken;
+    }
+
     public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
     // tslint:disable-next-line:no-null-keyword
     public networkError: string | null = null;
-    public showToken = false;
     // tslint:disable-next-line:no-null-keyword
     public fileError: string | null = null;
 
@@ -96,7 +101,7 @@ export default class Content extends Vue {
         this.checkedModel.filename = files[0].name;
 
         if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.youTrackToken) {
-            return [];
+            throw new Error("YouTrack coordinates missing!");
         }
 
         this.youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.youTrackToken);
