@@ -19,18 +19,49 @@ export class Model {
         return Application.title;
     }
 
-    /** Provides the file extension. */
     public readonly fileExtension = ".xlsm";
 
-    // tslint:disable-next-line:no-null-keyword
-    public youTrackBaseUrl: string | null = null;
+    public get youTrackBaseUrl() {
+        return this.youTrackBaseUrlImpl;
+    }
 
-    // tslint:disable-next-line:no-null-keyword
-    public youTrackToken: string | null = null;
+    public set youTrackBaseUrl(value: string | null) {
+        this.youTrackBaseUrlImpl = value;
+        Model.setLocalStorage(Model.youTrackBaseUrlKey, value);
+    }
+
+    public get youTrackToken() {
+        return this.youTrackTokenImpl;
+    }
+
+    public set youTrackToken(value: string | null) {
+        this.youTrackTokenImpl = value;
+        Model.setLocalStorage(Model.youTrackTokenKey, value);
+    }
 
     // tslint:disable-next-line:no-null-keyword
     public filename: string | null = null;
 
     // tslint:disable-next-line:no-null-keyword
     public times = new Array<ISpentTime>();
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static readonly youTrackBaseUrlKey = "youTrackBaseUrl";
+    private static readonly youTrackTokenKey = "youTrackToken";
+
+    private static getLocalStorage(key: string) {
+        return window.localStorage.getItem(key);
+    }
+
+    private static setLocalStorage(key: string, value: string | null) {
+        if (!value) {
+            window.localStorage.removeItem(key);
+        } else {
+            window.localStorage.setItem(key, value);
+        }
+    }
+
+    private youTrackBaseUrlImpl = Model.getLocalStorage(Model.youTrackBaseUrlKey);
+    private youTrackTokenImpl = Model.getLocalStorage(Model.youTrackTokenKey);
 }
