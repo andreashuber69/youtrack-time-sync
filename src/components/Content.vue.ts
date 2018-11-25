@@ -53,7 +53,7 @@ export default class Content extends Vue {
     ];
 
     public noSpentTimeText = "Upload your Excel file to see the unreported spent time.";
-
+    public showSuccess = false;
     // tslint:disable-next-line:no-null-keyword
     public times = new Array<ISpentTime>();
 
@@ -74,6 +74,7 @@ export default class Content extends Vue {
     // tslint:disable-next-line:prefer-function-over-method
     public async onSubmitClicked(event: MouseEvent) {
         await Promise.all(this.times.map((spentTime) => this.createWorkItem(spentTime)));
+        this.showSuccess = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -65,6 +65,7 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <v-snackbar v-model="showSuccess">Spent time reported successfully.</v-snackbar>
   </v-form>
 </template>
 
