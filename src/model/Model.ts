@@ -25,7 +25,7 @@ export class Model {
     public youTrackBaseUrl: string | null = null;
 
     // tslint:disable-next-line:no-null-keyword
-    public token: string | null = null;
+    public youTrackToken: string | null = null;
 
     // tslint:disable-next-line:no-null-keyword
     public filename: string | null = null;

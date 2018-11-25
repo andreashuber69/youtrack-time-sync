@@ -22,6 +22,15 @@ export default class Content extends Vue {
     @Prop()
     public model?: Model;
     public valid = false;
+
+    public get focusUrl() {
+        return !this.checkedModel.youTrackBaseUrl;
+    }
+
+    public get focusToken() {
+        return !this.focusUrl && !this.checkedModel.youTrackToken;
+    }
+
     public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
     // tslint:disable-next-line:no-null-keyword
     public networkError: string | null = null;
@@ -86,11 +95,11 @@ export default class Content extends Vue {
 
         this.checkedModel.filename = files[0].name;
 
-        if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.token) {
+        if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.youTrackToken) {
             return [];
         }
 
-        this.youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.token);
+        this.youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.youTrackToken);
 
         return SpentTimeUtility.getUnreportedSpentTime(files[0], this.youTrack, this);
     }
