@@ -11,6 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Application } from "./Application";
+import { ISpentTime } from "./SpentTimes";
 
 /** Represents the main model of the application. */
 export class Model {
@@ -29,4 +30,7 @@ export class Model {
 
     // tslint:disable-next-line:no-null-keyword
     public filename: string | null = null;
+
+    // tslint:disable-next-line:no-null-keyword
+    public times = new Array<ISpentTime>();
 }
