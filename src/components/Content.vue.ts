@@ -52,6 +52,8 @@ export default class Content extends Vue {
         { text: "Spent Time", align: "right", sortable: false },
     ];
 
+    public noSpentTimeText = "Upload your Excel file to see the unreported spent time.";
+
     // tslint:disable-next-line:no-null-keyword
     public times = new Array<ISpentTime>();
 
@@ -63,6 +65,7 @@ export default class Content extends Vue {
         try {
             const files = event.target && ((event.target as any).files as FileList) || undefined;
             this.times = await this.onFileInputChangedImpl(files);
+            this.noSpentTimeText = "The Excel file does not contain any unreported spent time.";
         } finally {
             this.fileInput.value = "";
         }
