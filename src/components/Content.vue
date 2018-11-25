@@ -14,7 +14,7 @@
 
 <template>
   <v-form ref="form" v-model="valid">
-    <v-container grid-list-md>
+    <v-container grid-list-lg>
       <v-layout row wrap>
         <v-flex xs12>
           <v-text-field
@@ -33,7 +33,7 @@
         </v-flex>
         <v-flex xs12>
           <v-text-field
-            label="Excel File"
+            ref="excelFileField" label="Excel File"
             v-model="model.filename" required readonly :disabled="disableFile" :rules="rules"
             :error-messages="fileError" append-icon="open_in_browser" @click:append="onOpenClicked">
           </v-text-field>
@@ -41,25 +41,28 @@
             ref="fileInput" type="file" :accept="model.fileExtension"
             style="display:none" @change="onFileInputChanged">
         </v-flex>
-      </v-layout>
-    </v-container>
-    <v-container grid-list-md>
-      <v-layout justify-center>
-        <v-data-table :headers="timeHeaders" :items="times" hide-actions class="elevation-1">
-          <template slot="items" slot-scope="props">
-            <td>{{ props.item.date.toLocaleDateString() }}</td>
-            <td>{{ props.item.title }}</td>
-            <td>{{ props.item.summary }}</td>
-            <td>{{ props.item.type }}</td>
-            <td style="white-space:pre">{{ props.item.comment }}</td>
-            <td class="text-xs-right">{{ (props.item.durationMinutes / 60).toFixed(2) + "h" }}</td>
-          </template>
-        </v-data-table>          
-      </v-layout>
-    </v-container>
-    <v-container grid-list-md>
-      <v-layout justify-center>
-        <v-btn :disabled="!valid" @click="onSubmitClicked">Submit</v-btn>
+        <v-flex xs12>
+          <v-card>
+            <v-card-title>
+              <h3 class="headline">Unreported Spent Time</h3>
+            </v-card-title>
+            <v-data-table :headers="timeHeaders" :items="times" hide-actions>
+              <template slot="items" slot-scope="props">
+                <td>{{ props.item.date.toLocaleDateString() }}</td>
+                <td>{{ props.item.title }}</td>
+                <td>{{ props.item.summary }}</td>
+                <td>{{ props.item.type }}</td>
+                <td style="white-space:pre">{{ props.item.comment }}</td>
+                <td class="text-xs-right">{{ (props.item.durationMinutes / 60).toFixed(2) + "h" }}</td>
+              </template>
+            </v-data-table>          
+          </v-card>
+        </v-flex>
+        <v-flex xs12>
+          <v-layout justify-center>
+            <v-btn color="primary" :disabled="!valid" @click="onSubmitClicked">Report Now</v-btn>
+          </v-layout>
+        </v-flex>
       </v-layout>
     </v-container>
   </v-form>

@@ -61,7 +61,8 @@ export default class Content extends Vue {
 
     public async onFileInputChanged(event: Event) {
         try {
-            this.times = await this.onFileInputChangedImpl((event.target as any).files as FileList);
+            const files = event.target && ((event.target as any).files as FileList) || undefined;
+            this.times = await this.onFileInputChangedImpl(files);
         } finally {
             this.fileInput.value = "";
         }
@@ -88,14 +89,21 @@ export default class Content extends Vue {
         return this.model;
     }
 
+    private get excelFileField() {
+        // tslint:disable-next-line:no-unsafe-any
+        return this.$refs.excelFileField as HTMLInputElement;
+    }
+
     private get fileInput() {
         // tslint:disable-next-line:no-unsafe-any
         return this.$refs.fileInput as HTMLInputElement;
     }
 
-    private async onFileInputChangedImpl(files: FileList) {
-        if (files.length !== 1) {
-            return [];
+    private async onFileInputChangedImpl(files: FileList | undefined) {
+        this.excelFileField.focus();
+
+        if (!files || (files.length !== 1)) {
+            throw new Error("Single file expected.");
         }
 
         this.checkedModel.filename = files[0].name;
