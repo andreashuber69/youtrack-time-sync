@@ -54,8 +54,6 @@ export default class Content extends Vue {
 
     public noSpentTimeText = "Upload your Excel file to see the unreported spent time.";
     public showSuccess = false;
-    // tslint:disable-next-line:no-null-keyword
-    public times = new Array<ISpentTime>();
 
     public onOpenClicked(event: MouseEvent) {
         this.fileInput.click();
@@ -64,7 +62,7 @@ export default class Content extends Vue {
     public async onFileInputChanged(event: Event) {
         try {
             const files = event.target && ((event.target as any).files as FileList) || undefined;
-            this.times = await this.onFileInputChangedImpl(files);
+            this.checkedModel.times = await this.onFileInputChangedImpl(files);
             this.noSpentTimeText = "The Excel file does not contain any unreported spent time.";
         } finally {
             this.fileInput.value = "";
@@ -73,7 +71,8 @@ export default class Content extends Vue {
 
     // tslint:disable-next-line:prefer-function-over-method
     public async onSubmitClicked(event: MouseEvent) {
-        await Promise.all(this.times.map((spentTime) => this.createWorkItem(spentTime)));
+        // TODO: Report errors
+        await Promise.all(this.checkedModel.times.map((spentTime) => this.createWorkItem(spentTime)));
         this.showSuccess = true;
     }
 

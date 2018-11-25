@@ -19,14 +19,15 @@
         <v-flex xs12>
           <v-text-field
             label="YouTrack Base URL" hint="Example: 'https://company.myjetbrains.com"
-            v-model="model.youTrackBaseUrl" required :autofocus="focusUrl" :rules="rules"
+            v-model="checkedModel.youTrackBaseUrl" required :autofocus="focusUrl" :rules="rules"
             :error-messages="networkError">
           </v-text-field>
         </v-flex>
         <v-flex xs12>
           <v-text-field
             label="YouTrack Authentication Token" hint="Example: 'perm:QUhV.VGVzdDI=.6fRv9xZztORX9LquKaXJHxf5lsKyoO'"
-            v-model="model.youTrackToken" required :autofocus="focusToken" :rules="rules" :error-messages="networkError"
+            v-model="checkedModel.youTrackToken" required :autofocus="focusToken" :rules="rules"
+            :error-messages="networkError"
             :append-icon="showToken ? 'visibility_off' : 'visibility'" :type="showToken ? 'text' : 'password'"
             @click:append="showToken = !showToken">
           </v-text-field>
@@ -34,11 +35,11 @@
         <v-flex xs12>
           <v-text-field
             ref="excelFileField" label="Excel File"
-            v-model="model.filename" required readonly :disabled="disableFile" :rules="rules"
+            v-model="checkedModel.filename" required readonly :disabled="disableFile" :rules="rules"
             :error-messages="fileError" append-icon="open_in_browser" @click:append="onOpenClicked">
           </v-text-field>
           <input
-            ref="fileInput" type="file" :accept="model.fileExtension"
+            ref="fileInput" type="file" :accept="checkedModel.fileExtension"
             style="display:none" @change="onFileInputChanged">
         </v-flex>
         <v-flex xs12>
@@ -46,7 +47,8 @@
             <v-card-title>
               <h3 class="headline">Unreported Spent Time</h3>
             </v-card-title>
-            <v-data-table :no-data-text="noSpentTimeText" :headers="timeHeaders" :items="times" hide-actions>
+            <v-data-table
+              :no-data-text="noSpentTimeText" :headers="timeHeaders" :items="checkedModel.times" hide-actions>
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.date.toLocaleDateString() }}</td>
                 <td>{{ props.item.title }}</td>
@@ -60,7 +62,7 @@
         </v-flex>
         <v-flex xs12>
           <v-layout justify-center>
-            <v-btn color="primary" :disabled="!valid || (times.length === 0)" @click="onSubmitClicked">Report Now</v-btn>
+            <v-btn color="primary" :disabled="!valid || (checkedModel.times.length === 0)" @click="onSubmitClicked">Report Now</v-btn>
           </v-layout>
         </v-flex>
       </v-layout>
