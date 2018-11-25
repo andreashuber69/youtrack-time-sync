@@ -21,43 +21,16 @@ interface IErrors {
 }
 
 export class SpentTimeUtility {
-    public static async getUnreportedSpentTime(excelFile: File, youTrack: YouTrack, errors: IErrors) {
-        // tslint:disable-next-line:no-null-keyword
-        errors.fileError = null;
-        let spentTimes: SpentTimes;
-
-        try {
-            const rawExcelSpentTimes =
-                WorkBookParser.parse(read(new Uint8Array(await this.read(excelFile)), { type: "array" }));
-            spentTimes = new SpentTimes(rawExcelSpentTimes, 15);
-        } catch (e) {
-            errors.fileError = this.getErrorMessage(e);
-
-            return [];
-        }
-
-        return this.subtractYouTrackSpentTimes(spentTimes, youTrack, errors);
+    public static async create(excelFile: File) {
+        return new SpentTimeUtility(await this.read(excelFile));
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static async subtractYouTrackSpentTimes(spentTimes: SpentTimes, youTrack: YouTrack, errors: IErrors) {
-        // tslint:disable-next-line:no-null-keyword
-        errors.networkError = null;
-        let issues: IIssue[];
-
-        try {
-            const issueIds = spentTimes.uniqueTitles();
-            const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
-            spentTimes.subtract(this.convert(youTrackWorkItems.values()));
-            issues = await youTrack.getIssues(spentTimes.uniqueTitles());
-        } catch (e) {
-            errors.networkError = this.getErrorMessage(e);
-
-            return [];
-        }
-
-        const result = spentTimes.entries();
+    public async subtractExistingSpentTimes(youTrack: YouTrack) {
+        const issueIds = this.spentTimes.uniqueTitles();
+        const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
+        this.subtractNewSpentTimes(youTrackWorkItems.values());
+        const issues = await youTrack.getIssues(this.spentTimes.uniqueTitles());
+        const result = this.spentTimes.entries();
 
         for (const spentTime of result) {
             const issue = issues.find((i) => i.id === spentTime.title);
@@ -66,6 +39,14 @@ export class SpentTimeUtility {
 
         return result;
     }
+
+    public subtractNewSpentTimes(spentTimes: IterableIterator<IIssueWorkItem>) {
+        this.spentTimes.subtract(SpentTimeUtility.convert(spentTimes));
+
+        return this.spentTimes.entries();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static * convert(workItems: IterableIterator<IIssueWorkItem>): IterableIterator<ISpentTime> {
         for (const workItem of workItems) {
@@ -89,7 +70,10 @@ export class SpentTimeUtility {
         });
     }
 
-    private static getErrorMessage(e: any) {
-        return e instanceof Error && e.toString() || "Unknown Error!";
+    private readonly spentTimes: SpentTimes;
+
+    private constructor(excelFileContent: ArrayBuffer) {
+        this.spentTimes =
+            new SpentTimes(WorkBookParser.parse(read(new Uint8Array(excelFileContent), { type: "array" })), 15);
     }
 }

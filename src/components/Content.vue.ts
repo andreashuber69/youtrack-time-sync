@@ -71,8 +71,11 @@ export default class Content extends Vue {
 
     // tslint:disable-next-line:prefer-function-over-method
     public async onSubmitClicked(event: MouseEvent) {
-        // TODO: Report errors
-        await Promise.all(this.checkedModel.times.map((spentTime) => this.createWorkItem(spentTime)));
+        // TODO: Report errors, subtract new spent times
+        const youTrack = this.createYouTrack();
+        const newSpentTimes = await Promise.all(
+            this.checkedModel.times.map((spentTime) => Content.createWorkItem(youTrack, spentTime)));
+
         this.showSuccess = true;
     }
 
@@ -82,7 +85,20 @@ export default class Content extends Vue {
         return !!value || "A value is required.";
     }
 
-    private youTrack: YouTrack | undefined;
+    private static getErrorMessage(e: any) {
+        return e instanceof Error && e.toString() || "Unknown Error!";
+    }
+
+    private static createWorkItem(youTrack: YouTrack, spentTime: ISpentTime) {
+        return youTrack.createWorkItem(spentTime.title, {
+            date: spentTime.date.getTime(),
+            duration: {
+                minutes: spentTime.durationMinutes,
+            },
+            text: spentTime.comment || undefined,
+            type: spentTime.type && { name: spentTime.type } || undefined,
+        });
+    }
 
     private get checkedModel() {
         if (!this.model) {
@@ -102,7 +118,19 @@ export default class Content extends Vue {
         return this.$refs.fileInput as HTMLInputElement;
     }
 
+    private createYouTrack() {
+        if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.youTrackToken) {
+            throw new Error("YouTrack coordinates missing!");
+        }
+
+        return new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.youTrackToken);
+    }
+
     private async onFileInputChangedImpl(files: FileList | undefined) {
+        // tslint:disable-next-line:no-null-keyword
+        this.fileError = null;
+        // tslint:disable-next-line:no-null-keyword
+        this.networkError = null;
         this.excelFileField.focus();
 
         if (!files || (files.length !== 1)) {
@@ -110,28 +138,22 @@ export default class Content extends Vue {
         }
 
         this.checkedModel.filename = files[0].name;
+        let utility: SpentTimeUtility;
 
-        if (!this.checkedModel.youTrackBaseUrl || !this.checkedModel.youTrackToken) {
-            throw new Error("YouTrack coordinates missing!");
+        try {
+            utility = await SpentTimeUtility.create(files[0]);
+        } catch (e) {
+            this.fileError = Content.getErrorMessage(e);
+
+            return [];
         }
 
-        this.youTrack = new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.youTrackToken);
+        try {
+            return utility.subtractExistingSpentTimes(this.createYouTrack());
+        } catch (e) {
+            this.networkError = Content.getErrorMessage(e);
 
-        return SpentTimeUtility.getUnreportedSpentTime(files[0], this.youTrack, this);
-    }
-
-    private createWorkItem(spentTime: ISpentTime) {
-        if (!this.youTrack) {
-            throw new Error("youTrack is not set.");
+            return [];
         }
-
-        return this.youTrack.createWorkItem(spentTime.title, {
-            date: spentTime.date.getTime(),
-            duration: {
-                minutes: spentTime.durationMinutes,
-            },
-            text: spentTime.comment || undefined,
-            type: spentTime.type && { name: spentTime.type } || undefined,
-        });
     }
 }
