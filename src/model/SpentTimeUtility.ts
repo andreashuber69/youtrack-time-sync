@@ -13,12 +13,7 @@
 import { read } from "xlsx";
 import { ISpentTime, SpentTimes } from "./SpentTimes";
 import { WorkBookParser } from "./WorkBookParser";
-import { IIssue, IIssueWorkItem, YouTrack } from "./YouTrack";
-
-interface IErrors {
-    fileError: string | null;
-    networkError: string | null;
-}
+import { IIssueWorkItem, YouTrack } from "./YouTrack";
 
 export class SpentTimeUtility {
     public static async create(excelFile: File) {
