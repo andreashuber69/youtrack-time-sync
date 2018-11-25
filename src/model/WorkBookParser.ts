@@ -162,7 +162,11 @@ export class WorkBookParser {
     }
 
     private static getSpentTime(end: ICell<number>, start: ICell<number>, row: IRow) {
-        const spentTime = end.v - start.v;
+        let spentTime = end.v - start.v;
+
+        if (Math.abs(spentTime) < 1 / 24 / 60 / 60) {
+            spentTime = 0;
+        }
 
         if (spentTime < 0) {
             throw new Error(`${row.errorPrefix}C${row.row} must be smaller than D${row.row}.`);
