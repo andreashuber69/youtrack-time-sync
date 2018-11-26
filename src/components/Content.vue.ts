@@ -37,7 +37,7 @@ export default class Content extends Vue {
         return !this.checkedModel.youTrackBaseUrl || !this.checkedModel.youTrackToken;
     }
 
-    public readonly rules = [ (value: unknown) => Content.requiredRule(value) ];
+    public readonly rules = [ (value: unknown) => !!value || "A value is required." ];
     // tslint:disable-next-line:no-null-keyword
     public networkError: string | null = null;
     // tslint:disable-next-line:no-null-keyword
@@ -69,7 +69,6 @@ export default class Content extends Vue {
         }
     }
 
-    // tslint:disable-next-line:prefer-function-over-method
     public async onSubmitClicked(event: MouseEvent) {
         // TODO: Report errors, subtract new spent times
         const youTrack = this.createYouTrack();
@@ -80,10 +79,6 @@ export default class Content extends Vue {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static requiredRule(value: unknown) {
-        return !!value || "A value is required.";
-    }
 
     private static getErrorMessage(e: any) {
         return e instanceof Error && e.toString() || "Unknown Error!";
@@ -108,11 +103,6 @@ export default class Content extends Vue {
         return this.model;
     }
 
-    private get excelFileField() {
-        // tslint:disable-next-line:no-unsafe-any
-        return this.$refs.excelFileField as HTMLInputElement;
-    }
-
     private get fileInput() {
         // tslint:disable-next-line:no-unsafe-any
         return this.$refs.fileInput as HTMLInputElement;
@@ -131,7 +121,8 @@ export default class Content extends Vue {
         this.fileError = null;
         // tslint:disable-next-line:no-null-keyword
         this.networkError = null;
-        this.excelFileField.focus();
+        // tslint:disable-next-line:no-unsafe-any
+        (this.$refs.excelFileField as HTMLInputElement).focus();
 
         if (!files || (files.length !== 1)) {
             throw new Error("Single file expected.");
