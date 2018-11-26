@@ -126,7 +126,7 @@ export default class Content extends Vue {
         return new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.youTrackToken);
     }
 
-    private async onFileInputChangedImpl(files: FileList | undefined) {
+    private onFileInputChangedImpl(files: FileList | undefined) {
         // tslint:disable-next-line:no-null-keyword
         this.fileError = null;
         // tslint:disable-next-line:no-null-keyword
@@ -138,10 +138,15 @@ export default class Content extends Vue {
         }
 
         this.checkedModel.filename = files[0].name;
+
+        return this.process(files[0]);
+    }
+
+    private async process(excelFile: File) {
         let utility: SpentTimeUtility;
 
         try {
-            utility = await SpentTimeUtility.create(files[0]);
+            utility = await SpentTimeUtility.create(excelFile);
         } catch (e) {
             this.fileError = Content.getErrorMessage(e);
 
@@ -149,7 +154,7 @@ export default class Content extends Vue {
         }
 
         try {
-            return utility.subtractExistingSpentTimes(this.createYouTrack());
+            return await utility.subtractExistingSpentTimes(this.createYouTrack());
         } catch (e) {
             this.networkError = Content.getErrorMessage(e);
 
