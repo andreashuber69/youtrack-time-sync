@@ -58,10 +58,10 @@ export interface ICreateIssueWorkItem {
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
 export class YouTrack {
-    public constructor(private readonly baseUrl: string, private readonly authenticationToken: string) {
+    public constructor(private readonly baseUrl: string, authenticationToken: string) {
         this.headersInit = new Headers([
             [ "Accept", "application/json" ],
-            [ "Authorization", `Bearer ${this.authenticationToken}` ],
+            [ "Authorization", `Bearer ${authenticationToken}` ],
             [ "Cache-Control", "no-cache" ],
             [ "Content-Type", "application/json" ],
         ]);
@@ -127,6 +127,22 @@ export class YouTrack {
         return `youtrack/api/issues/${issueId}/timeTracking/workItems`;
     }
 
+    private static parse<T>(responseText: string) {
+        let result: T | null;
+
+        try {
+            result = JSON.parse(responseText) as T | null;
+        } catch (e) {
+            throw new Error(`Parse Failure: ${e}`);
+        }
+
+        if (result === null) {
+            throw new Error("Unexpected null response.");
+        }
+
+        return result;
+    }
+
     private readonly headersInit: Headers;
 
     private get<T>(path: string, params?: Array<[ string, string ]>) {
@@ -158,19 +174,7 @@ export class YouTrack {
             throw new Error(`Response Status: ${response.status} ${response.statusText}`);
         }
 
-        let result: T | null;
-
-        try {
-            result = JSON.parse(await response.text()) as T | null;
-        } catch (e) {
-            throw new Error(`Parse Failure: ${e}`);
-        }
-
-        if (result === null) {
-            throw new Error("Unexpected null response.");
-        }
-
-        return result;
+        return YouTrack.parse<T>(await response.text());
     }
 
     private getInit(methodInit: Method, body?: unknown): RequestInit {
