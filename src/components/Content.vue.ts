@@ -11,9 +11,9 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { ExcelYouTrackSpentTimeUtility } from "../model/ExcelYoUTrackSpentTimeUtility";
 import { Model } from "../model/Model";
 import { ISpentTime } from "../model/SpentTimes";
-import { SpentTimeUtility } from "../model/SpentTimeUtility";
 import { YouTrack } from "../model/YouTrack";
 
 @Component
@@ -143,10 +143,10 @@ export default class Content extends Vue {
     }
 
     private async process(excelFile: File) {
-        let utility: SpentTimeUtility;
+        let utility: ExcelYouTrackSpentTimeUtility;
 
         try {
-            utility = await SpentTimeUtility.create(excelFile);
+            utility = await ExcelYouTrackSpentTimeUtility.create(excelFile);
         } catch (e) {
             this.fileError = Content.getErrorMessage(e);
 

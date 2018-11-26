@@ -10,20 +10,39 @@
 // You should have received a copy of the GNU General Public License along with this program. If not, see
 // <http://www.gnu.org/licenses/>.
 
+/** Represents working time spent on a particular issue. */
 export interface ISpentTime {
+    /** The date of the day the work was done. */
     readonly date: Date;
+
+    /** The title of the work, usually the issue id assigned by a issue tracking server. */
     readonly title: string;
+
+    /** The type of the work. */
     readonly type?: string;
+
+    /** Whether or not this is a paid absence. */
     readonly isPaidAbsence: boolean;
+
+    /** The summary of the issue the time was spent on, usually retrieved from the issue tracking server. */
     summary?: string;
+
+    /** A comment further describing the work done. */
     comment?: string;
+
+    /** The number of minutes spent. */
     durationMinutes: number;
 }
 
+/**
+ * @summary Implements a container that can be used to establish the difference between the spent times kept locally and
+ * those already reported to a server.
+ */
 export class SpentTimes {
+    /** Initializes the container with the locally kept time. */
     public constructor(
-        excelTimes: IterableIterator<ISpentTime>, private readonly roundingMinutes: 1 | 5 | 10 | 15 | 30) {
-        for (const time of excelTimes) {
+        localTimes: IterableIterator<ISpentTime>, private readonly roundingMinutes: 1 | 5 | 10 | 15 | 30) {
+        for (const time of localTimes) {
             this.addSingle(time);
         }
 
@@ -32,16 +51,19 @@ export class SpentTimes {
         }
     }
 
+    /** Gets the unique titles of all spent times. */
     public uniqueTitles() {
         return [ ...new Set([ ...this.map.values() ].map((time) => time.title)) ];
     }
 
-    public subtract(youTrackTimes: IterableIterator<ISpentTime>) {
-        for (const youTrackTime of youTrackTimes) {
-            this.subtractSingle(youTrackTime);
+    /** Subtracts the spent time already on the server. */
+    public subtract(serverTimes: IterableIterator<ISpentTime>) {
+        for (const serverTime of serverTimes) {
+            this.subtractSingle(serverTime);
         }
     }
 
+    /** Gets the remaining spent time entries. */
     public entries() {
         const result = [ ...this.map.values() ];
         result.sort((left, right) => SpentTimes.compare(left, right));

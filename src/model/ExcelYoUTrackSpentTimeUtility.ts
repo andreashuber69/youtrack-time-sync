@@ -15,9 +15,12 @@ import { ISpentTime, SpentTimes } from "./SpentTimes";
 import { WorkBookParser } from "./WorkBookParser";
 import { IIssueWorkItem, YouTrack } from "./YouTrack";
 
-export class SpentTimeUtility {
+/**
+ * @summary Reconciles spent time recorded in an Excel file with the one kept on a YouTrack server.
+ */
+export class ExcelYouTrackSpentTimeUtility {
     public static async create(excelFile: File) {
-        return new SpentTimeUtility(await this.read(excelFile));
+        return new ExcelYouTrackSpentTimeUtility(await this.read(excelFile));
     }
 
     public async subtractExistingSpentTimes(youTrack: YouTrack) {
@@ -36,7 +39,7 @@ export class SpentTimeUtility {
     }
 
     public subtractNewSpentTimes(spentTimes: IIssueWorkItem[]) {
-        this.spentTimes.subtract(SpentTimeUtility.convert(spentTimes));
+        this.spentTimes.subtract(ExcelYouTrackSpentTimeUtility.convert(spentTimes));
 
         return this.spentTimes.entries();
     }
