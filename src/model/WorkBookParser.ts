@@ -85,18 +85,17 @@ export class WorkBookParser {
     }
 
     private static * iterateRows(firstDataRow: number, bottom: number, sheetName: string, sheet: WorkSheet) {
-        for (let row = firstDataRow; row <= bottom; ++row) {
+        for (let currentRow = firstDataRow; currentRow <= bottom; ++currentRow) {
             const parsed = this.parseRow({
                 errorPrefix: `In sheet ${sheetName}, `,
-                // tslint:disable-next-line:object-literal-key-quotes
-                "row": row,
-                holidays: sheet[`A${row}`] as ICell<number | string> | undefined,
-                otherPaidAbsence: sheet[`B${row}`] as ICell<number | string> | undefined,
-                start: sheet[`C${row}`] as ICell<number | string> | undefined,
-                end: sheet[`D${row}`] as ICell<number | string> | undefined,
-                title: sheet[`E${row}`] as ICell<number | string> | undefined,
-                type: sheet[`F${row}`] as ICell<number | string> | undefined,
-                comment: sheet[`G${row}`] as ICell<number | string> | undefined,
+                row: currentRow,
+                holidays: sheet[`A${currentRow}`] as ICell<number | string> | undefined,
+                otherPaidAbsence: sheet[`B${currentRow}`] as ICell<number | string> | undefined,
+                start: sheet[`C${currentRow}`] as ICell<number | string> | undefined,
+                end: sheet[`D${currentRow}`] as ICell<number | string> | undefined,
+                title: sheet[`E${currentRow}`] as ICell<number | string> | undefined,
+                type: sheet[`F${currentRow}`] as ICell<number | string> | undefined,
+                comment: sheet[`G${currentRow}`] as ICell<number | string> | undefined,
             });
 
             if (parsed) {
@@ -114,22 +113,20 @@ export class WorkBookParser {
 
         const [ start, end ] = period;
         const spentTime = this.getSpentTime(end, start, row);
-        const [ isPaidAbsence, title ] = this.getWorkDetail(row, start, end);
+        const [ isPaidAbsenceInit, titleInit ] = this.getWorkDetail(row, start, end);
 
         if (start.f === undefined) {
-            if (!title) {
+            if (!titleInit) {
                 throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
             }
 
-            if (title.includes("-")) {
+            if (titleInit.includes("-")) {
                 return {
                     date: this.toDate(start.v),
-                    // tslint:disable-next-line:object-literal-key-quotes
-                    "title": title,
+                    title: titleInit,
                     type: row.type && row.type.v.toString() || undefined,
                     comment: row.comment && row.comment.v.toString() || undefined,
-                    // tslint:disable-next-line:object-literal-key-quotes
-                    "isPaidAbsence": isPaidAbsence,
+                    isPaidAbsence: isPaidAbsenceInit,
                     durationMinutes: spentTime * 24 * 60,
                 };
             }
