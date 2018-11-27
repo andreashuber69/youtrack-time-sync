@@ -48,7 +48,8 @@
               <h3 class="headline">Unreported Spent Time</h3>
             </v-card-title>
             <v-data-table
-              :no-data-text="noSpentTimeText" :headers="timeHeaders" :items="checkedModel.times" hide-actions>
+              :headers="timeHeaders" :items="checkedModel.times" :no-data-text="noSpentTimeText" :loading="isLoading" hide-actions>
+              <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.date.toLocaleDateString() }}</td>
                 <td>{{ props.item.title }}</td>
@@ -62,7 +63,9 @@
         </v-flex>
         <v-flex xs12>
           <v-layout justify-center>
-            <v-btn color="primary" :disabled="!valid || (checkedModel.times.length === 0)" @click="onSubmitClicked">Report Now</v-btn>
+            <v-btn color="primary" :disabled="!valid || (checkedModel.times.length === 0)" @click="onReportNowClicked">
+              Report Now
+            </v-btn>
           </v-layout>
         </v-flex>
       </v-layout>
