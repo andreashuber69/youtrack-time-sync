@@ -56,26 +56,27 @@ export class WorkBookParser {
     private static readonly excelEpochStart = new Date(1899, 11, 30);
 
     private static * parseSheet(sheet: WorkSheet, sheetName: string) {
-        if (sheetName.startsWith("Week")) {
-
-            const range = sheet["!ref"];
-
-            if (!range) {
-                throw new Error(`The sheet ${sheetName} seems to be empty.`);
-            }
-
-            const dividerIndex = range.indexOf(":");
-            this.checkRange(dividerIndex < 0, sheetName, range);
-            const [ left, top ] = this.split(range.substring(0, dividerIndex), sheetName, range);
-            const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheetName, range);
-            const firstDataRow = 5;
-            this.checkRange(
-                (left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
-
-            for (const time of this.iterateRows(firstDataRow, bottom, sheetName, sheet)) {
-                yield time;
-            }
+        if (!sheetName.startsWith("Week")) {
+            // False positive, this rule should not apply to generators.
+            // tslint:disable-next-line:return-undefined
+            return;
         }
+
+        const range = sheet["!ref"];
+
+        if (!range) {
+            throw new Error(`The sheet ${sheetName} seems to be empty.`);
+        }
+
+        const dividerIndex = range.indexOf(":");
+        this.checkRange(dividerIndex < 0, sheetName, range);
+        const [ left, top ] = this.split(range.substring(0, dividerIndex), sheetName, range);
+        const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheetName, range);
+        const firstDataRow = 5;
+        this.checkRange(
+            (left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
+
+        yield * this.iterateRows(firstDataRow, bottom, sheetName, sheet);
     }
 
     private static checkRange(fail: boolean, sheetName: string, range: string) {
@@ -86,7 +87,7 @@ export class WorkBookParser {
 
     private static * iterateRows(firstDataRow: number, bottom: number, sheetName: string, sheet: WorkSheet) {
         for (let currentRow = firstDataRow; currentRow <= bottom; ++currentRow) {
-            const parsed = this.parseRow({
+            yield * this.parseRow({
                 errorPrefix: `In sheet ${sheetName}, `,
                 row: currentRow,
                 holidays: sheet[`A${currentRow}`] as ICell<number | string> | undefined,
@@ -97,18 +98,16 @@ export class WorkBookParser {
                 type: sheet[`F${currentRow}`] as ICell<number | string> | undefined,
                 comment: sheet[`G${currentRow}`] as ICell<number | string> | undefined,
             });
-
-            if (parsed) {
-                yield parsed;
-            }
         }
     }
 
-    private static parseRow(row: IRow) {
+    private static * parseRow(row: IRow) {
         const period = this.getPeriod(row);
 
         if (!period) {
-            return undefined;
+            // False positive, this rule should not apply to generators.
+            // tslint:disable-next-line:return-undefined
+            return;
         }
 
         const [ start, end ] = period;
@@ -121,7 +120,7 @@ export class WorkBookParser {
             }
 
             if (titleInit.includes("-")) {
-                return {
+                yield {
                     date: this.toDate(start.v),
                     title: titleInit,
                     type: row.type && row.type.v.toString() || undefined,
@@ -131,8 +130,6 @@ export class WorkBookParser {
                 };
             }
         }
-
-        return undefined;
     }
 
     private static split(corner: string, sheetName: string, range: string): [ string, number ] {
