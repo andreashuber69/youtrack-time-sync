@@ -42,7 +42,6 @@ export class Model {
     // tslint:disable-next-line:no-null-keyword
     public filename: string | null = null;
 
-    // tslint:disable-next-line:no-null-keyword
     public times = new Array<ISpentTime>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -114,8 +114,13 @@ export class YouTrack {
             (workItem) => workItem.creator.id === user.id);
     }
 
-    public createWorkItem(issueId: string, workItem: ICreateIssueWorkItem) {
-        return this.post<IIssueWorkItem>(YouTrack.getWorkItemsPath(issueId), YouTrack.workItemsParams, workItem);
+    public async createWorkItem(issueId: string, workItem: ICreateIssueWorkItem) {
+        const result =
+            await this.post<IIssueWorkItem>(YouTrack.getWorkItemsPath(issueId), YouTrack.workItemsParams, workItem);
+
+        result.issue.id = issueId;
+
+        return result;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
