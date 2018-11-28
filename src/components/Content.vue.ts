@@ -11,10 +11,10 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { ExcelYouTrackSpentTimeUtility } from "../model/ExcelYoUTrackSpentTimeUtility";
+import { ExcelYouTrackSpentTimeUtility } from "../model/ExcelYouTrackSpentTimeUtility";
 import { Model } from "../model/Model";
 import { ISpentTime } from "../model/SpentTimes";
-import { YouTrack } from "../model/YouTrack";
+import { IIssueWorkItem, YouTrack } from "../model/YouTrack";
 
 @Component
 // tslint:disable-next-line:no-default-export
@@ -65,7 +65,6 @@ export default class Content extends Vue {
             this.isLoading = true;
             const files = event.target && ((event.target as any).files as FileList) || undefined;
             this.checkedModel.times = await this.onFileInputChangedImpl(files);
-            this.noSpentTimeText = "The Excel file does not contain any unreported spent time.";
         } finally {
             this.fileInput.value = "";
             this.isLoading = false;
@@ -73,17 +72,24 @@ export default class Content extends Vue {
     }
 
     public async onReportNowClicked(event: MouseEvent) {
+        const youTrack = this.createYouTrack();
+        let newSpentTimes: IIssueWorkItem[];
+
         try {
             this.isLoading = true;
-            // TODO: Report errors, subtract new spent times
-            const youTrack = this.createYouTrack();
-            const newSpentTimes = await Promise.all(
+            // TODO: Report errors
+            newSpentTimes = await Promise.all(
                 this.checkedModel.times.map((spentTime) => Content.createWorkItem(youTrack, spentTime)));
-
-            this.showSuccess = true;
         } finally {
             this.isLoading = false;
         }
+
+        if (!this.spentTimeUtility) {
+            throw new Error("spentTimeUtility is not set!");
+        }
+
+        this.checkedModel.times = this.spentTimeUtility.subtractNewSpentTimes(newSpentTimes);
+        this.showSuccess = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,6 +108,8 @@ export default class Content extends Vue {
             type: spentTime.type && { name: spentTime.type } || undefined,
         });
     }
+
+    private spentTimeUtility: ExcelYouTrackSpentTimeUtility | undefined;
 
     private get checkedModel() {
         if (!this.model) {
@@ -142,22 +150,26 @@ export default class Content extends Vue {
     }
 
     private async process(excelFile: File) {
-        let utility: ExcelYouTrackSpentTimeUtility;
-
         try {
-            utility = await ExcelYouTrackSpentTimeUtility.create(excelFile);
+            this.spentTimeUtility = await ExcelYouTrackSpentTimeUtility.create(excelFile);
         } catch (e) {
             this.fileError = Content.getErrorMessage(e);
 
             return [];
         }
 
+        let result: ISpentTime[];
+
         try {
-            return await utility.subtractExistingSpentTimes(this.createYouTrack());
+            result = await this.spentTimeUtility.subtractExistingSpentTimes(this.createYouTrack());
         } catch (e) {
             this.networkError = Content.getErrorMessage(e);
 
             return [];
         }
+
+        this.noSpentTimeText = "The Excel file does not contain any unreported spent time.";
+
+        return result;
     }
 }
