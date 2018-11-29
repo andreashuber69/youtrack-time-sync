@@ -36,7 +36,7 @@
           <v-text-field
             ref="excelFileField" label="Excel File"
             v-model="checkedModel.filename" required readonly :disabled="disableFile" :rules="rules"
-            :error-messages="fileError" append-icon="open_in_browser" @click:append="onOpenClicked">
+            :error-messages="fileError" append-icon="open_in_browser" @click:append="$refs.fileInput.click()">
           </v-text-field>
           <input
             ref="fileInput" type="file" :accept="checkedModel.fileExtension"
