@@ -13,7 +13,7 @@
 import { read } from "xlsx";
 import { ISpentTime, SpentTimes } from "./SpentTimes";
 import { WorkBookParser } from "./WorkBookParser";
-import { IIssueWorkItem, YouTrack } from "./YouTrack";
+import { IIssueWorkItem, IUser, YouTrack } from "./YouTrack";
 
 /**
  * @summary Reconciles spent time recorded in an Excel file with the one kept on a YouTrack server.
@@ -23,9 +23,9 @@ export class ExcelYouTrackSpentTimeUtility {
         return new ExcelYouTrackSpentTimeUtility(await this.read(excelFile));
     }
 
-    public async subtractExistingSpentTimes(youTrack: YouTrack) {
+    public async subtractExistingSpentTimes(youTrack: YouTrack, currentUser: IUser) {
         const issueIds = this.spentTimes.uniqueTitles();
-        const youTrackWorkItems = await youTrack.getWorkItemsForUser(await youTrack.getCurrentUser(), issueIds);
+        const youTrackWorkItems = await youTrack.getWorkItemsForUser(currentUser, issueIds);
         this.subtractNewSpentTimes(youTrackWorkItems);
         const issues = await youTrack.getIssues(this.spentTimes.uniqueTitles());
         const result = this.spentTimes.entries();
