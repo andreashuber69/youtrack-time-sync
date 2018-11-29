@@ -56,17 +56,13 @@ export default class Content extends Vue {
     public noSpentTimeText = Content.defaultNoSpentTimeText;
     public isLoading = false;
 
-    public onOpenClicked(event: MouseEvent) {
-        this.fileInput.click();
-    }
-
     public async onFileInputChanged(event: Event) {
         try {
             this.isLoading = true;
             const files = event.target && ((event.target as any).files as FileList) || undefined;
             this.checkedModel.times = await this.onFileInputChangedImpl(files);
         } finally {
-            this.fileInput.value = "";
+            (this.$refs.fileInput as HTMLInputElement).value = "";
             this.isLoading = false;
         }
     }
@@ -123,11 +119,6 @@ export default class Content extends Vue {
         }
 
         return this.model;
-    }
-
-    private get fileInput() {
-        // tslint:disable-next-line:no-unsafe-any
-        return this.$refs.fileInput as HTMLInputElement;
     }
 
     private get statusSnackbar() {
