@@ -13,8 +13,8 @@
 -->
 
 <template>
-  <v-snackbar :color="color" v-model="visible" :timeout="timeout">
-    {{ message }}<v-btn dark flat @click="visible = false">Close</v-btn>
+  <v-snackbar :color="color" v-model="isVisible" :timeout="timeout">
+    {{ message }}<v-btn dark flat @click="isVisible = false">Close</v-btn>
   </v-snackbar>
 </template>
 

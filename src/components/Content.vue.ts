@@ -178,7 +178,7 @@ export default class Content extends Vue {
         try {
             result = await this.spentTimeUtility.subtractExistingSpentTimes(youTrack, currentUser);
         } catch (e) {
-            this.networkError = Content.getErrorMessage(e);
+            this.statusSnackbar.showError(Content.getErrorMessage(e));
 
             return [];
         }
