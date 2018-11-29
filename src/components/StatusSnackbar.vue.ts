@@ -19,7 +19,7 @@ export default class StatusSnackbar extends Vue {
     public color: string | null = null;
     // tslint:disable-next-line:no-null-keyword
     public message: string | null = null;
-    public visible = false;
+    public isVisible = false;
     // tslint:disable-next-line:no-null-keyword
     public timeout: number | null = null;
 
@@ -34,7 +34,7 @@ export default class StatusSnackbar extends Vue {
     private show(color: "success" | "error", message: string, timeout = 6000) {
         this.color = color;
         this.message = message;
-        this.visible = true;
+        this.isVisible = true;
         this.timeout = timeout;
     }
 }
