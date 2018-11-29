@@ -14,7 +14,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { ExcelYouTrackSpentTimeUtility } from "../model/ExcelYouTrackSpentTimeUtility";
 import { Model } from "../model/Model";
 import { ISpentTime } from "../model/SpentTimes";
-import { IIssueWorkItem, YouTrack } from "../model/YouTrack";
+import { IIssueWorkItem, IUser, YouTrack } from "../model/YouTrack";
 
 @Component
 // tslint:disable-next-line:no-default-export
@@ -158,10 +158,21 @@ export default class Content extends Vue {
             return [];
         }
 
+        const youTrack = this.createYouTrack();
+        let currentUser: IUser;
+
+        try {
+            currentUser = await youTrack.getCurrentUser();
+        } catch (e) {
+            this.networkError = Content.getErrorMessage(e);
+
+            return [];
+        }
+
         let result: ISpentTime[];
 
         try {
-            result = await this.spentTimeUtility.subtractExistingSpentTimes(this.createYouTrack());
+            result = await this.spentTimeUtility.subtractExistingSpentTimes(youTrack, currentUser);
         } catch (e) {
             this.networkError = Content.getErrorMessage(e);
 
