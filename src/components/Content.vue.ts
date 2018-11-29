@@ -53,7 +53,7 @@ export default class Content extends Vue {
         { text: "Spent Time", align: "right", sortable: false },
     ];
 
-    public noSpentTimeText = "Upload your Excel file to see the unreported spent time.";
+    public noSpentTimeText = Content.defaultNoSpentTimeText;
     public isLoading = false;
 
     public onOpenClicked(event: MouseEvent) {
@@ -84,15 +84,13 @@ export default class Content extends Vue {
             this.isLoading = false;
         }
 
-        if (!this.spentTimeUtility) {
-            throw new Error("spentTimeUtility is not set!");
-        }
-
         this.checkedModel.times = this.spentTimeUtility.subtractNewSpentTimes(newSpentTimes);
         this.statusSnackbar.showInfo("Spent time reported successfully.");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static readonly defaultNoSpentTimeText = "Upload your Excel file to see the unreported spent time.";
 
     private static getErrorMessage(e: any) {
         return e instanceof Error && e.toString() || "Unknown Error!";
@@ -109,7 +107,15 @@ export default class Content extends Vue {
         });
     }
 
-    private spentTimeUtility: ExcelYouTrackSpentTimeUtility | undefined;
+    private spentTimeUtilityImpl: ExcelYouTrackSpentTimeUtility | undefined;
+
+    private get spentTimeUtility() {
+        if (!this.spentTimeUtilityImpl) {
+            throw new Error("spentTimeUtility is not set!");
+        }
+
+        return this.spentTimeUtilityImpl;
+    }
 
     private get checkedModel() {
         if (!this.model) {
@@ -136,7 +142,7 @@ export default class Content extends Vue {
         return new YouTrack(this.checkedModel.youTrackBaseUrl, this.checkedModel.youTrackToken);
     }
 
-    private onFileInputChangedImpl(files: FileList | undefined) {
+    private async onFileInputChangedImpl(files: FileList | undefined) {
         // tslint:disable-next-line:no-null-keyword
         this.fileError = null;
         // tslint:disable-next-line:no-null-keyword
@@ -150,16 +156,21 @@ export default class Content extends Vue {
 
         this.checkedModel.filename = files[0].name;
 
-        return this.process(files[0]);
+        try {
+            return await this.process(files[0]);
+        } catch (e) {
+            this.noSpentTimeText = Content.defaultNoSpentTimeText;
+
+            return [];
+        }
     }
 
     private async process(excelFile: File) {
         try {
-            this.spentTimeUtility = await ExcelYouTrackSpentTimeUtility.create(excelFile);
+            this.spentTimeUtilityImpl = await ExcelYouTrackSpentTimeUtility.create(excelFile);
         } catch (e) {
             this.fileError = Content.getErrorMessage(e);
-
-            return [];
+            throw e;
         }
 
         const youTrack = this.createYouTrack();
@@ -169,18 +180,20 @@ export default class Content extends Vue {
             currentUser = await youTrack.getCurrentUser();
         } catch (e) {
             this.networkError = Content.getErrorMessage(e);
-
-            return [];
+            throw e;
         }
 
+        return this.subtractExisting(youTrack, currentUser);
+    }
+
+    private async subtractExisting(youTrack: YouTrack, currentUser: IUser) {
         let result: ISpentTime[];
 
         try {
             result = await this.spentTimeUtility.subtractExistingSpentTimes(youTrack, currentUser);
         } catch (e) {
             this.statusSnackbar.showError(Content.getErrorMessage(e));
-
-            return [];
+            throw e;
         }
 
         this.noSpentTimeText = "The Excel file does not contain any unreported spent time.";
