@@ -15,8 +15,9 @@ import { ExcelYouTrackSpentTimeUtility } from "../model/ExcelYouTrackSpentTimeUt
 import { Model } from "../model/Model";
 import { ISpentTime } from "../model/SpentTimes";
 import { IIssueWorkItem, IUser, YouTrack } from "../model/YouTrack";
+import StatusSnackbar from "./StatusSnackbar.vue";
 
-@Component
+@Component({ components: { StatusSnackbar } })
 // tslint:disable-next-line:no-default-export
 export default class Content extends Vue {
     @Prop()
@@ -54,7 +55,6 @@ export default class Content extends Vue {
 
     public noSpentTimeText = "Upload your Excel file to see the unreported spent time.";
     public isLoading = false;
-    public showSuccess = false;
 
     public onOpenClicked(event: MouseEvent) {
         this.fileInput.click();
@@ -89,7 +89,7 @@ export default class Content extends Vue {
         }
 
         this.checkedModel.times = this.spentTimeUtility.subtractNewSpentTimes(newSpentTimes);
-        this.showSuccess = true;
+        this.statusSnackbar.showInfo("Spent time reported successfully.");
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,6 +122,10 @@ export default class Content extends Vue {
     private get fileInput() {
         // tslint:disable-next-line:no-unsafe-any
         return this.$refs.fileInput as HTMLInputElement;
+    }
+
+    private get statusSnackbar() {
+        return this.$refs.statusSnackbar as StatusSnackbar;
     }
 
     private createYouTrack() {
