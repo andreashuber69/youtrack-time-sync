@@ -111,25 +111,29 @@ export class WorkBookParser {
         }
 
         const [ start, end ] = period;
-        const spentTime = this.getSpentTime(end, start, row);
+        const spentTime = this.getSpentTime(row, start, end);
         const [ isPaidAbsenceInit, titleInit ] = this.getWorkDetail(row, start, end);
 
-        if (start.f === undefined) {
-            if (!titleInit) {
-                throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
-            }
+        if (start.f !== undefined) {
+            // False positive, this rule should not apply to generators.
+            // tslint:disable-next-line:return-undefined
+            return;
+        }
 
-            if (titleInit.includes("-")) {
-                yield {
-                    date: this.toDate(start.v),
-                    title: titleInit,
-                    type: row.type && row.type.v.toString() || undefined,
-                    comments: row.comment &&
-                        row.comment.v.toString().split("\n").map((c) => c.trim()).filter((c) => !!c) || [],
-                    isPaidAbsence: isPaidAbsenceInit,
-                    durationMinutes: spentTime * 24 * 60,
-                };
-            }
+        if (!titleInit) {
+            throw new Error(`${row.errorPrefix}E${row.row} must not be empty.`);
+        }
+
+        if (titleInit.includes("-")) {
+            yield {
+                date: this.toDate(start.v),
+                title: titleInit,
+                type: row.type && row.type.v.toString() || undefined,
+                comments: row.comment &&
+                    row.comment.v.toString().split("\n").map((c) => c.trim()).filter((c) => !!c) || [],
+                isPaidAbsence: isPaidAbsenceInit,
+                durationMinutes: spentTime * 24 * 60,
+            };
         }
     }
 
@@ -156,7 +160,7 @@ export class WorkBookParser {
         return [ { v: row.start.v, f: row.start.f }, { v: row.end.v, f: row.end.f } ];
     }
 
-    private static getSpentTime(end: ICell<number>, start: ICell<number>, row: IRow) {
+    private static getSpentTime(row: IRow, start: ICell<number>, end: ICell<number>) {
         let spentTime = end.v - start.v;
 
         if (Math.abs(spentTime) < 1 / 24 / 60 / 60) {
@@ -182,8 +186,8 @@ export class WorkBookParser {
         const isPaidAbsence = !!row.holidays || !!row.otherPaidAbsence;
 
         if (isPaidAbsence) {
-            if ((start.f !== undefined) || (end.f === undefined)) {
-                throw new Error(`${row.errorPrefix}C${row.row} must be fixed and D${row.row} must be floating.`);
+            if (end.f === undefined) {
+                throw new Error(`${row.errorPrefix}D${row.row} must be a formula.`);
             }
 
             return [ isPaidAbsence, row.holidays ? "Holiday" : "Other Paid Absence" ];
@@ -193,7 +197,7 @@ export class WorkBookParser {
                     `${row.errorPrefix}C${row.row} and D${row.row} must either be both values or both formulas.`);
             }
 
-            return [ isPaidAbsence, row.title && row.title.v && row.title.v.toString() || undefined ];
+            return [ isPaidAbsence, row.title && row.title.v.toString() || undefined ];
         }
     }
 
