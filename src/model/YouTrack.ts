@@ -41,6 +41,11 @@ export interface IIssueWorkItem {
     };
 }
 
+export interface IWorkItemType {
+    readonly id: string;
+    readonly name: string;
+}
+
 export interface ICreateIssueWorkItem {
     readonly date: number;
 
@@ -51,7 +56,7 @@ export interface ICreateIssueWorkItem {
     readonly text?: string;
 
     readonly type?: {
-        readonly name?: string;
+        readonly id: string;
     };
 }
 
@@ -112,6 +117,11 @@ export class YouTrack {
 
         return new Array<IIssueWorkItem>().concat(...workItemsArray).filter(
             (workItem) => workItem.creator.id === user.id);
+    }
+
+    public getWorkItemTypes() {
+        return this.get<IWorkItemType[]>(
+            "youtrack/api/admin/timeTrackingSettings/workItemTypes", [[ "fields", "id,name" ]]);
     }
 
     public async createWorkItem(issueId: string, workItem: ICreateIssueWorkItem) {
