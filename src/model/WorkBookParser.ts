@@ -185,25 +185,29 @@ export class WorkBookParser {
 
         const isPaidAbsence = !!row.holidays || !!row.otherPaidAbsence;
 
-        if (isPaidAbsence) {
-            if (end.f === undefined) {
-                throw new Error(`${row.errorPrefix}D${row.row} must be a formula.`);
-            }
-
-            return [ isPaidAbsence, row.holidays ? "Holiday" : "Other Paid Absence" ];
-        } else {
-            if ((start.f === undefined) !== (end.f === undefined)) {
-                throw new Error(
-                    `${row.errorPrefix}C${row.row} and D${row.row} must either be both values or both formulas.`);
-            }
-
-            return [ isPaidAbsence, row.title && row.title.v.toString() || undefined ];
-        }
+        return [ isPaidAbsence, isPaidAbsence ? this.getPaidAbsenceTitle(row, end) : this.getTitle(row, start, end) ];
     }
 
     private static toDate(excelDate: number) {
         // YouTrack work item dates are represented as milliseconds since unix epoch rounded down to midnight UTC.
         return new Date(
             Math.floor(this.excelEpochStart.getTime() / 1000 / 60 / 60 / 24 + excelDate) * 24 * 60 * 60 * 1000);
+    }
+
+    private static getPaidAbsenceTitle(row: IRow, end: ICell<number>) {
+        if (end.f === undefined) {
+            throw new Error(`${row.errorPrefix}D${row.row} must be a formula.`);
+        }
+
+        return row.holidays ? "Holiday" : "Other Paid Absence";
+    }
+
+    private static getTitle(row: IRow, start: ICell<number>, end: ICell<number>) {
+        if ((start.f === undefined) !== (end.f === undefined)) {
+            throw new Error(
+                `${row.errorPrefix}C${row.row} and D${row.row} must either be both values or both formulas.`);
+        }
+
+        return row.title && row.title.v.toString() || undefined;
     }
 }
