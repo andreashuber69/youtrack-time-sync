@@ -53,7 +53,7 @@ export class WorkBookParser {
     // 1900 was a leap year
     // (https://support.microsoft.com/en-us/help/214326/excel-incorrectly-assumes-that-the-year-1900-is-a-leap-year).
     // The 0-based epoch therefore starts at 1899/12/30. Finally, the months in js are 0-based...
-    private static readonly excelEpochStart = new Date(1899, 11, 30);
+    private static readonly excelEpochStartOffset = new Date(1899, 11, 30).getTime() / 1000 / 60 / 60 / 24;
 
     private static * parseSheet(sheet: WorkSheet, sheetName: string) {
         if (!sheetName.startsWith("Week")) {
@@ -190,8 +190,7 @@ export class WorkBookParser {
 
     private static toDate(excelDate: number) {
         // YouTrack work item dates are represented as milliseconds since unix epoch rounded down to midnight UTC.
-        return new Date(
-            Math.floor(this.excelEpochStart.getTime() / 1000 / 60 / 60 / 24 + excelDate) * 24 * 60 * 60 * 1000);
+        return new Date(Math.floor(this.excelEpochStartOffset + excelDate) * 24 * 60 * 60 * 1000);
     }
 
     private static getPaidAbsenceTitle(row: IRow, end: ICell<number>) {
