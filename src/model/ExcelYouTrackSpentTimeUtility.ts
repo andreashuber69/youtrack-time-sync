@@ -53,7 +53,7 @@ export class ExcelYouTrackSpentTimeUtility {
                 title: workItem.issue.id,
                 type: workItem.type && workItem.type.name || undefined,
                 isPaidAbsence: false,
-                comment: workItem.text,
+                comments: workItem.text && workItem.text.split("\n").map((c) => c.trim()) || [],
                 durationMinutes: workItem.duration.minutes,
             };
         }

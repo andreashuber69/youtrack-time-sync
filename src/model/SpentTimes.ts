@@ -28,7 +28,7 @@ export interface ISpentTime {
     summary?: string;
 
     /** A comment further describing the work done. */
-    comment?: string;
+    comments: string[];
 
     /** The number of minutes spent. */
     durationMinutes: number;
@@ -78,6 +78,14 @@ export class SpentTimes {
             (left.type || "").localeCompare(right.type || "") || 0;
     }
 
+    private static add(existingComments: string[], newComment: string) {
+        if (!existingComments.includes(newComment)) {
+            existingComments.push(newComment);
+        }
+
+        return existingComments;
+    }
+
     private readonly map = new Map<string, ISpentTime>();
 
     private addSingle(time: ISpentTime) {
@@ -85,11 +93,7 @@ export class SpentTimes {
 
         if (existingTime) {
             existingTime.durationMinutes += time.durationMinutes;
-
-            if (time.comment) {
-                existingTime.comment =
-                    existingTime.comment ? `${existingTime.comment}\n${time.comment}` : time.comment;
-            }
+            time.comments.reduce((p, c) => SpentTimes.add(p, c), existingTime.comments);
         } else {
             this.map.set(key, time);
         }

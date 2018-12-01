@@ -124,7 +124,8 @@ export class WorkBookParser {
                     date: this.toDate(start.v),
                     title: titleInit,
                     type: row.type && row.type.v.toString() || undefined,
-                    comment: row.comment && row.comment.v.toString() || undefined,
+                    comments: row.comment &&
+                        row.comment.v.toString().split("\n").map((c) => c.trim()).filter((c) => !!c) || [],
                     isPaidAbsence: isPaidAbsenceInit,
                     durationMinutes: spentTime * 24 * 60,
                 };
