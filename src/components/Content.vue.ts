@@ -73,9 +73,10 @@ export default class Content extends Vue {
 
         try {
             this.isLoading = true;
-            // TODO: Report errors
+            const workItemTypes = new Map<string, string>(
+                (await youTrack.getWorkItemTypes()).map((t) => [ t.name, t.id ] as [ string, string ]));
             newSpentTimes = await Promise.all(
-                this.checkedModel.times.map((spentTime) => Content.createWorkItem(youTrack, spentTime)));
+                this.checkedModel.times.map((spentTime) => Content.createWorkItem(youTrack, workItemTypes, spentTime)));
         } catch (e) {
             this.statusSnackbar.showError(Content.getErrorMessage(e));
 
@@ -96,14 +97,21 @@ export default class Content extends Vue {
         return e instanceof Error && e.toString() || "Unknown Error!";
     }
 
-    private static createWorkItem(youTrack: YouTrack, spentTime: ISpentTime) {
+    private static createWorkItem(youTrack: YouTrack, workItemTypes: Map<string, string>, spentTime: ISpentTime) {
+        const workItemId = spentTime.type && workItemTypes.get(spentTime.type);
+
+        if (spentTime.type && !workItemId) {
+            throw new Error(
+                `The type ${spentTime.type} is not available. Please select a different type in the Excel file.`);
+        }
+
         return youTrack.createWorkItem(spentTime.title, {
             date: spentTime.date.getTime(),
             duration: {
                 minutes: spentTime.durationMinutes,
             },
             text: spentTime.comments.join("\n") || undefined,
-            type: spentTime.type && { name: spentTime.type } || undefined,
+            type: workItemId && { id: workItemId } || undefined,
         });
     }
 
