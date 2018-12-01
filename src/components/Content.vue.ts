@@ -76,6 +76,10 @@ export default class Content extends Vue {
             // TODO: Report errors
             newSpentTimes = await Promise.all(
                 this.checkedModel.times.map((spentTime) => Content.createWorkItem(youTrack, spentTime)));
+        } catch (e) {
+            this.statusSnackbar.showError(Content.getErrorMessage(e));
+
+            return;
         } finally {
             this.isLoading = false;
         }
