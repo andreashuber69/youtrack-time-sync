@@ -98,7 +98,7 @@ export default class Content extends Vue {
             duration: {
                 minutes: spentTime.durationMinutes,
             },
-            text: spentTime.comment || undefined,
+            text: spentTime.comments.join("\n") || undefined,
             type: spentTime.type && { name: spentTime.type } || undefined,
         });
     }

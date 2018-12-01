@@ -34,7 +34,7 @@ export interface IIssueWorkItem {
         id: string;
     };
 
-    readonly text: string;
+    readonly text: string | null;
 
     readonly type: {
         readonly name: string;

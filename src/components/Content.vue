@@ -55,7 +55,7 @@
                 <td>{{ props.item.title }}</td>
                 <td>{{ props.item.summary }}</td>
                 <td>{{ props.item.type }}</td>
-                <td style="white-space:pre">{{ props.item.comment }}</td>
+                <td style="white-space:pre">{{ props.item.comments.join("\n") }}</td>
                 <td class="text-xs-right">{{ (props.item.durationMinutes / 60).toFixed(2) + "h" }}</td>
               </template>
             </v-data-table>          
