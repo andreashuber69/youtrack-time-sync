@@ -78,7 +78,7 @@ export class WorkBookParser {
         const leftTop = this.split(range.substring(0, dividerIndex), sheet.name, range);
         const rightBottom = this.split(range.substring(dividerIndex + 1, range.length), sheet.name, range);
         const firstDataRow = 5;
-        this.checkRange(WorkBookParser.hasCorrectSize(leftTop, rightBottom, firstDataRow), sheet.name, range);
+        this.checkRange(this.hasCorrectSize(leftTop, rightBottom, firstDataRow), sheet.name, range);
 
         yield * this.iterateRows(firstDataRow, rightBottom[1], sheet);
     }
