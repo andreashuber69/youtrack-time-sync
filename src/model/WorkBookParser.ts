@@ -134,8 +134,7 @@ export class WorkBookParser {
                 date: this.toDate(start.v),
                 title: titleInit,
                 type: row.type && row.type.v.toString() || undefined,
-                comments:
-                    row.comment && row.comment.v.toString().split("\n").map((c) => c.trim()).filter((c) => !!c) || [],
+                comments: WorkBookParser.getComments(row),
                 isPaidAbsence: isPaidAbsenceInit,
                 durationMinutes: spentTime * 24 * 60,
             };
@@ -196,6 +195,10 @@ export class WorkBookParser {
     private static toDate(excelDate: number) {
         // YouTrack work item dates are represented as milliseconds since unix epoch rounded down to midnight UTC.
         return new Date(Math.floor(this.excelEpochStartOffset + excelDate) * 24 * 60 * 60 * 1000);
+    }
+
+    private static getComments(row: IRow) {
+        return row.comment && row.comment.v.toString().split("\n").map((c) => c.trim()).filter((c) => !!c) || [];
     }
 
     private static getPaidAbsenceTitle(row: IRow, end: ICell<number>) {
