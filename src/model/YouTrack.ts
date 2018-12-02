@@ -161,15 +161,23 @@ export class YouTrack {
     private readonly headersInit: Headers;
 
     private get<T>(path: string, params?: Array<[ string, string ]>) {
-        return this.fetch<T>(path, "GET", params);
+        return this.fetch<T>(path, this.getInit("GET"), params);
     }
 
     private post<T>(path: string, params?: Array<[ string, string ]>, body?: unknown) {
-        return this.fetch<T>(path, "POST", params, body);
+        return this.fetch<T>(path, this.getInit("POST", body), params);
     }
 
-    private async fetch<T>(
-        path: string, method: Method, params?: Array<[ string, string ]>, body?: unknown) {
+    private getInit(methodInit: Method, body?: unknown): RequestInit {
+        return {
+            method: methodInit,
+            headers: this.headersInit,
+            body: JSON.stringify(body),
+            mode: "cors",
+        };
+    }
+
+    private async fetch<T>(path: string, requestInit: RequestInit, params?: Array<[ string, string ]>) {
         let response: Response;
         const url = new URL(path, this.baseUrl);
 
@@ -180,7 +188,7 @@ export class YouTrack {
         }
 
         try {
-            response = await window.fetch(url.href, this.getInit(method, body));
+            response = await window.fetch(url.href, requestInit);
         } catch (e) {
             throw new Error(`Network Error: ${e}`);
         }
@@ -190,14 +198,5 @@ export class YouTrack {
         }
 
         return YouTrack.parse<T>(await response.text());
-    }
-
-    private getInit(methodInit: Method, body?: unknown): RequestInit {
-        return {
-            method: methodInit,
-            headers: this.headersInit,
-            body: JSON.stringify(body),
-            mode: "cors",
-        };
     }
 }
