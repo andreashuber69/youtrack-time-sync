@@ -75,19 +75,30 @@ export class WorkBookParser {
 
         const dividerIndex = range.indexOf(":");
         this.checkRange(dividerIndex < 0, sheet.name, range);
-        const [ left, top ] = this.split(range.substring(0, dividerIndex), sheet.name, range);
-        const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheet.name, range);
+        const leftTop = this.split(range.substring(0, dividerIndex), sheet.name, range);
+        const rightBottom = this.split(range.substring(dividerIndex + 1, range.length), sheet.name, range);
         const firstDataRow = 5;
-        this.checkRange(
-            (left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheet.name, range);
+        this.checkRange(WorkBookParser.hasCorrectSize(leftTop, rightBottom, firstDataRow), sheet.name, range);
 
-        yield * this.iterateRows(firstDataRow, bottom, sheet);
+        yield * this.iterateRows(firstDataRow, rightBottom[1], sheet);
     }
 
     private static checkRange(fail: boolean, sheetName: string, range: string) {
         if (fail) {
             throw new Error(`The sheet ${sheetName} has an unexpected range: ${range}.`);
         }
+    }
+
+    private static split(corner: string, sheetName: string, range: string): [ string, number ] {
+        const rowIndex = corner.search("[0-9]+");
+        this.checkRange(rowIndex < 0, sheetName, range);
+
+        return [ corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10) ];
+    }
+
+    private static hasCorrectSize(leftTop: [ string, number ], rightBottom: [ string, number ], firstDataRow: number) {
+        return (leftTop[0] !== "A") || (leftTop[1] !== 1) ||
+            (rightBottom[0] !== "G") || (rightBottom[1] < firstDataRow);
     }
 
     private static * iterateRows(firstDataRow: number, bottom: number, sheet: ISheet) {
@@ -106,6 +117,9 @@ export class WorkBookParser {
         }
     }
 
+    // Breaking this apart is possible but comes with needing to pass many arguments, which in turn would have to be
+    // wrapped.
+    // codebeat:disable[LOC]
     private static * parseRow(row: IRow) {
         const period = this.getPeriod(row);
 
@@ -140,13 +154,7 @@ export class WorkBookParser {
             };
         }
     }
-
-    private static split(corner: string, sheetName: string, range: string): [ string, number ] {
-        const rowIndex = corner.search("[0-9]+");
-        this.checkRange(rowIndex < 0, sheetName, range);
-
-        return [ corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10) ];
-    }
+    // codebeat:enable[LOC]
 
     private static getPeriod(row: IRow): [ ICell<number>, ICell<number> ] | undefined {
         if (!row.start !== !row.end) {
