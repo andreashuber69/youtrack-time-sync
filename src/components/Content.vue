@@ -19,14 +19,15 @@
         <v-flex xs12>
           <v-text-field
             label="YouTrack Base URL" hint="Example: 'https://company.myjetbrains.com"
-            v-model="checkedModel.youTrackBaseUrl" required :autofocus="focusUrl" :rules="rules"
+            v-model="checkedModel.youTrackBaseUrl" required :autofocus="!checkedModel.youTrackBaseUrl" :rules="rules"
             :error-messages="networkError">
           </v-text-field>
         </v-flex>
         <v-flex xs12>
           <v-text-field
             label="YouTrack Authentication Token" hint="Example: 'perm:QUhV.VGVzdDI=.6fRv9xZztORX9LquKaXJHxf5lsKyoO'"
-            v-model="checkedModel.youTrackToken" required :autofocus="focusToken" :rules="rules"
+            v-model="checkedModel.youTrackToken" required
+            :autofocus="checkedModel.youTrackBaseUrl && !checkedModel.youTrackToken" :rules="rules"
             :error-messages="networkError"
             :append-icon="showToken ? 'visibility_off' : 'visibility'" :type="showToken ? 'text' : 'password'"
             @click:append="showToken = !showToken">
@@ -35,7 +36,8 @@
         <v-flex xs12>
           <v-text-field
             ref="excelFileField" label="Excel File"
-            v-model="checkedModel.filename" required readonly :disabled="disableFile" :rules="rules"
+            v-model="checkedModel.filename" required readonly
+            :disabled="!checkedModel.youTrackBaseUrl || !checkedModel.youTrackToken" :rules="rules"
             :error-messages="fileError" append-icon="open_in_browser" @click:append="$refs.fileInput.click()">
           </v-text-field>
           <input
