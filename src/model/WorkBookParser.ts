@@ -30,12 +30,17 @@ interface IRow {
     readonly comment?: ICell<number | string>;
 }
 
+interface ISheet {
+    readonly name: string;
+    readonly workSheet: WorkSheet;
+}
+
 export class WorkBookParser {
     public static * parse(workBook: WorkBook): IterableIterator<ISpentTime> {
         let containsOneOrMoreWeeks = false;
 
         for (const sheetName of workBook.SheetNames) {
-            for (const time of this.parseSheet(workBook.Sheets[sheetName], sheetName)) {
+            for (const time of this.parseSheet({ name: sheetName, workSheet: workBook.Sheets[sheetName] })) {
                 containsOneOrMoreWeeks = true;
                 yield time;
             }
@@ -55,28 +60,28 @@ export class WorkBookParser {
     // The 0-based epoch therefore starts at 1899/12/30. Finally, the months in js are 0-based...
     private static readonly excelEpochStartOffset = new Date(1899, 11, 30).getTime() / 1000 / 60 / 60 / 24;
 
-    private static * parseSheet(sheet: WorkSheet, sheetName: string) {
-        if (!sheetName.startsWith("Week")) {
+    private static * parseSheet(sheet: ISheet) {
+        if (!sheet.name.startsWith("Week")) {
             // False positive, this rule should not apply to generators.
             // tslint:disable-next-line:return-undefined
             return;
         }
 
-        const range = sheet["!ref"];
+        const range = sheet.workSheet["!ref"];
 
         if (!range) {
-            throw new Error(`The sheet ${sheetName} seems to be empty.`);
+            throw new Error(`The sheet ${sheet.name} seems to be empty.`);
         }
 
         const dividerIndex = range.indexOf(":");
-        this.checkRange(dividerIndex < 0, sheetName, range);
-        const [ left, top ] = this.split(range.substring(0, dividerIndex), sheetName, range);
-        const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheetName, range);
+        this.checkRange(dividerIndex < 0, sheet.name, range);
+        const [ left, top ] = this.split(range.substring(0, dividerIndex), sheet.name, range);
+        const [ right, bottom ] = this.split(range.substring(dividerIndex + 1, range.length), sheet.name, range);
         const firstDataRow = 5;
         this.checkRange(
-            (left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheetName, range);
+            (left !== "A") || (right !== "G") || (top !== 1) || (bottom < firstDataRow), sheet.name, range);
 
-        yield * this.iterateRows(firstDataRow, bottom, sheetName, sheet);
+        yield * this.iterateRows(firstDataRow, bottom, sheet);
     }
 
     private static checkRange(fail: boolean, sheetName: string, range: string) {
@@ -85,18 +90,18 @@ export class WorkBookParser {
         }
     }
 
-    private static * iterateRows(firstDataRow: number, bottom: number, sheetName: string, sheet: WorkSheet) {
+    private static * iterateRows(firstDataRow: number, bottom: number, sheet: ISheet) {
         for (let currentRow = firstDataRow; currentRow <= bottom; ++currentRow) {
             yield * this.parseRow({
-                errorPrefix: `In sheet ${sheetName}, `,
+                errorPrefix: `In sheet ${sheet.name}, `,
                 row: currentRow,
-                holidays: sheet[`A${currentRow}`] as ICell<number | string> | undefined,
-                otherPaidAbsence: sheet[`B${currentRow}`] as ICell<number | string> | undefined,
-                start: sheet[`C${currentRow}`] as ICell<number | string> | undefined,
-                end: sheet[`D${currentRow}`] as ICell<number | string> | undefined,
-                title: sheet[`E${currentRow}`] as ICell<number | string> | undefined,
-                type: sheet[`F${currentRow}`] as ICell<number | string> | undefined,
-                comment: sheet[`G${currentRow}`] as ICell<number | string> | undefined,
+                holidays: sheet.workSheet[`A${currentRow}`] as ICell<number | string> | undefined,
+                otherPaidAbsence: sheet.workSheet[`B${currentRow}`] as ICell<number | string> | undefined,
+                start: sheet.workSheet[`C${currentRow}`] as ICell<number | string> | undefined,
+                end: sheet.workSheet[`D${currentRow}`] as ICell<number | string> | undefined,
+                title: sheet.workSheet[`E${currentRow}`] as ICell<number | string> | undefined,
+                type: sheet.workSheet[`F${currentRow}`] as ICell<number | string> | undefined,
+                comment: sheet.workSheet[`G${currentRow}`] as ICell<number | string> | undefined,
             });
         }
     }
@@ -129,8 +134,8 @@ export class WorkBookParser {
                 date: this.toDate(start.v),
                 title: titleInit,
                 type: row.type && row.type.v.toString() || undefined,
-                comments: row.comment &&
-                    row.comment.v.toString().split("\n").map((c) => c.trim()).filter((c) => !!c) || [],
+                comments:
+                    row.comment && row.comment.v.toString().split("\n").map((c) => c.trim()).filter((c) => !!c) || [],
                 isPaidAbsence: isPaidAbsenceInit,
                 durationMinutes: spentTime * 24 * 60,
             };
