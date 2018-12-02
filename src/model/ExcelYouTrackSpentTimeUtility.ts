@@ -46,7 +46,7 @@ export class ExcelYouTrackSpentTimeUtility {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static * convert(workItems: IIssueWorkItem[]): IterableIterator<ISpentTime> {
+    private static * convert(workItems: IIssueWorkItem[]) {
         for (const workItem of workItems) {
             yield {
                 date: new Date(workItem.date),
