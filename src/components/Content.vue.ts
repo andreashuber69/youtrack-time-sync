@@ -23,20 +23,7 @@ export default class Content extends Vue {
     @Prop()
     public model?: Model;
     public valid = false;
-
-    public get focusUrl() {
-        return !this.checkedModel.youTrackBaseUrl;
-    }
-
-    public get focusToken() {
-        return !this.focusUrl && !this.checkedModel.youTrackToken;
-    }
-
     public showToken = false;
-
-    public get disableFile() {
-        return !this.checkedModel.youTrackBaseUrl || !this.checkedModel.youTrackToken;
-    }
 
     public readonly rules = [ (value: unknown) => !!value || "A value is required." ];
     // tslint:disable-next-line:no-null-keyword
