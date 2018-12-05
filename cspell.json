@@ -1,19 +1,27 @@
 {
-  "enabledLanguageIds": [
-    "html",
-    "markdown",
-    "plaintext",
-    "typescript",
-    "vue"
-  ],
-  "words": [
-    "Andreas",
-    "Dönni",
-    "autofocus",
-    "nbsp",
-    "snackbar",
-    "submodule",
-    "vuetify"
-  ]
+    "version": "0.1",
+    "language": "en",
+    "words": [
+        "Andreas",
+        "autofocus",
+        "codebeat",
+        "Dönni",
+        "nbsp",
+        "snackbar",
+        "styl",
+        "submodule",
+        "vuetify",
+        "xlsm",
+        "youtrack"
+    ],
+    "flagWords": [],
+    "ignorePaths": [
+        "dist/**",
+        "node_modules/**",
+        "**/*.svg",
+        "cspell.json",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json"
+    ]
 }
-  
