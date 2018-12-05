@@ -14,5 +14,15 @@
   "cSpell.import": [ "../cspell.json" ],
   "files.autoSave": "afterDelay",
   "git.confirmSync": false,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "cSpell.enabledLanguageIds": [
+    "html",
+    "javascript",
+    "json",
+    "jsonc",
+    "markdown",
+    "plaintext",
+    "typescript",
+    "vue"
+  ]
 }
