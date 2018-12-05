@@ -11,7 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { read } from "xlsx";
-import { ISpentTime, SpentTimes } from "./SpentTimes";
+import { SpentTimes } from "./SpentTimes";
 import { WorkBookParser } from "./WorkBookParser";
 import { IIssueWorkItem, IUser, YouTrack } from "./YouTrack";
 
