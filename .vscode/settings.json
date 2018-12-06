@@ -11,10 +11,6 @@
 // <http://www.gnu.org/licenses/>.
 
 {
-  "cSpell.import": [ "../cspell.json" ],
-  "files.autoSave": "afterDelay",
-  "git.confirmSync": false,
-  "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.enabledLanguageIds": [
     "html",
     "javascript",
@@ -22,7 +18,13 @@
     "jsonc",
     "markdown",
     "plaintext",
+    "shellscript",
     "typescript",
-    "vue"
-  ]
+    "vue",
+    "yaml"
+  ],
+  "cSpell.import": [ "../cspell.json" ],
+  "files.autoSave": "afterDelay",
+  "git.confirmSync": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
 }
