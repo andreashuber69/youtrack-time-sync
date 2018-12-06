@@ -6,14 +6,18 @@
         "autofocus",
         "codebeat",
         "Dönni",
+        "downlevel",
+        "esnext",
+        "interop",
         "nbsp",
+        "scripthost",
         "snackbar",
         "styl",
         "submodule",
         "vuetify",
         "xlsm",
         "youtrack"
-    ],
+        ],
     "flagWords": [],
     "ignorePaths": [
         "dist/**",
@@ -21,7 +25,6 @@
         "**/*.svg",
         "cspell.json",
         "package.json",
-        "package-lock.json",
-        "tsconfig.json"
+        "package-lock.json"
     ]
 }
