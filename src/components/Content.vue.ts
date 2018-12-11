@@ -56,14 +56,16 @@ export default class Content extends Vue {
 
     public async onReportNowClicked(event: MouseEvent) {
         const youTrack = this.createYouTrack();
-        let newSpentTimes: IIssueWorkItem[];
+        const newSpentTimes = new Array<IIssueWorkItem>();
 
         try {
             this.isLoading = true;
             const workItemTypes = new Map<string, string>(
                 (await youTrack.getWorkItemTypes()).map((t) => [ t.name, t.id ] as [ string, string ]));
-            newSpentTimes = await Promise.all(
-                this.checkedModel.times.map((spentTime) => Content.createWorkItem(youTrack, workItemTypes, spentTime)));
+
+            for (const time of this.checkedModel.times) {
+                newSpentTimes.push(await Content.createWorkItem(youTrack, workItemTypes, time));
+            }
         } catch (e) {
             this.statusSnackbar.showError(Content.getErrorMessage(e));
 
