@@ -104,7 +104,8 @@ export default class Content extends Vue {
         });
     }
 
-    private spentTimeUtilityImpl: ExcelYouTrackSpentTimeUtility | undefined;
+    // tslint:disable-next-line:no-null-keyword
+    private spentTimeUtilityImpl: ExcelYouTrackSpentTimeUtility | null = null;
 
     private get spentTimeUtility() {
         if (!this.spentTimeUtilityImpl) {
