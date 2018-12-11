@@ -43,7 +43,7 @@ export class SpentTimes {
     public constructor(
         localTimes: IterableIterator<ISpentTime>, private readonly roundingMinutes: 1 | 5 | 10 | 15 | 30) {
         for (const time of localTimes) {
-            this.earliestLocalDate = Math.min(this.earliestLocalDate, time.date.getDate());
+            this.earliestLocalDate = Math.min(this.earliestLocalDate, time.date.getTime());
             this.addSingle(time);
         }
 
@@ -60,7 +60,7 @@ export class SpentTimes {
     /** Subtracts the spent time already on the server. */
     public subtract(serverTimes: IterableIterator<ISpentTime>) {
         for (const serverTime of serverTimes) {
-            if (serverTime.date.getDate() >= this.earliestLocalDate) {
+            if (serverTime.date.getTime() >= this.earliestLocalDate) {
                 this.subtractSingle(serverTime);
             }
         }
