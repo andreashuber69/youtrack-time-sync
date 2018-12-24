@@ -37,17 +37,10 @@ interface ISheet {
 
 export class WorkBookParser {
     public static * parse(workBook: WorkBook): IterableIterator<ISpentTime> {
-        let containsOneOrMoreWeeks = false;
-
         for (const sheetName of workBook.SheetNames) {
             for (const time of this.parseSheet({ name: sheetName, workSheet: workBook.Sheets[sheetName] })) {
-                containsOneOrMoreWeeks = true;
                 yield time;
             }
-        }
-
-        if (!containsOneOrMoreWeeks) {
-            throw new Error("The selected workbook does not seem to contain any Week sheets.");
         }
     }
 
