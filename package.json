@@ -27,7 +27,8 @@
     "build": "cross-env WEBPACK_BASE_URL=/youtrack-time-sync vue-cli-service build",
     "prelint": "cspell '**/*.*'",
     "lint": "tslint --project tsconfig.json --config tslint.json --format verbose",
-    "test": "karma start"
+    "test": "karma start",
+    "watch-coverage": "cd ./coverage/*/html && lite-server"
   },
   "dependencies": {
     "vue": "^2.5.17",
@@ -48,6 +49,7 @@
     "karma-cli": "^2.0.0",
     "karma-jasmine": "^2.0.1",
     "karma-typescript": "^3.0.13",
+    "lite-server": "^2.4.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "typescript": "^3.0.0",
