@@ -54,16 +54,40 @@ describe("WorkBookParser.parse", () => {
         "should fail to parse a sheet with rows shortfall",
         "NotEnoughRows.xlsm", "The sheet Week01 has an unexpected range: A1:G4.");
 
-    const time = {
-        date: new Date(Date.UTC(2019, 0, 5)),
-        title: "FB-42",
-        type: "Other Type",
-        comments: [ "Work tied to an issue" ],
-        isPaidAbsence: false,
-        durationMinutes: 360,
-    };
+    const times = [
+        {
+            date: new Date(Date.UTC(2019, 0, 2)),
+            title: "FB-42",
+            comments: [ "Work without a type" ],
+            isPaidAbsence: false,
+            durationMinutes: 360,
+        },
+        {
+            date: new Date(Date.UTC(2019, 0, 3)),
+            title: "FB-43",
+            type: "No Comment",
+            comments: [],
+            isPaidAbsence: false,
+            durationMinutes: 360,
+        },
+        {
+            date: new Date(Date.UTC(2019, 0, 4)),
+            title: "FB-44",
+            comments: [],
+            isPaidAbsence: false,
+            durationMinutes: 360,
+        },
+        {
+            date: new Date(Date.UTC(2019, 0, 5)),
+            title: "FB-45",
+            type: "Other Type",
+            comments: [ "Work tied to an issue" ],
+            isPaidAbsence: false,
+            durationMinutes: 360,
+        },
+    ];
 
-    expectResult("should parse a sheet with correct rows", "CorrectRows.xlsm", [ time ]);
+    expectResult("should parse a sheet with correct rows", "CorrectRows.xlsm", times);
 
     const emptyMessage = "In sheet Week01, C5 and D5 must either be both empty or non-empty.";
     expectError("should fail to parse a sheet with a row with an empty start", "EmptyStart.xlsm", emptyMessage);
