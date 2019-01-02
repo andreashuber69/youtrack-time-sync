@@ -29,7 +29,33 @@ const loadTestSheet = async (name: string) => {
 describe("WorkBookParser.parse", () => {
     it("should parse work book without week sheets", async () => {
         const workBook = await loadTestSheet("NoWeekSheets.xlsm");
-        const times = [ ...WorkBookParser.parse(workBook) ];
-        expect(times).toEqual([]);
+
+        expect([ ...WorkBookParser.parse(workBook) ]).toEqual([]);
+    });
+
+    it("should fail to parse an empty sheet", async () => {
+        const workBook = await loadTestSheet("Empty.xlsm");
+
+        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError("The sheet Week01 seems to be empty.");
+    });
+
+    it("should fail to parse a sheet with columns shortfall", async () => {
+        const workBook = await loadTestSheet("NotEnoughColumns.xlsm");
+
+        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError(
+            "The sheet Week01 has an unexpected range: A1:F5.");
+    });
+
+    it("should fail to parse a sheet with rows shortfall", async () => {
+        const workBook = await loadTestSheet("NotEnoughRows.xlsm");
+
+        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError(
+            "The sheet Week01 has an unexpected range: A1:G4.");
+    });
+
+    it("should parse a sheet with a single row", async () => {
+        const workBook = await loadTestSheet("SingleRow.xlsm");
+
+        expect([ ...WorkBookParser.parse(workBook) ]).toEqual([]);
     });
 });
