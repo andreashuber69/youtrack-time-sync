@@ -27,8 +27,8 @@ const loadTestSheet = async (name: string) => {
 };
 
 describe("WorkBookParser.parse", () => {
-    it("should parse empty workbook", async () => {
-        const workBook = await loadTestSheet("Empty.xlsm");
+    it("should parse work book without week sheets", async () => {
+        const workBook = await loadTestSheet("NoWeekSheets.xlsm");
         const times = [ ...WorkBookParser.parse(workBook) ];
         expect(times).toEqual([]);
     });
