@@ -55,7 +55,7 @@ describe("WorkBookParser.parse", () => {
         "NotEnoughRows.xlsm", "The sheet Week01 has an unexpected range: A1:G4.");
 
     const time = {
-        date: new Date(Date.UTC(2019, 0, 2)),
+        date: new Date(Date.UTC(2019, 0, 5)),
         title: "FB-42",
         type: "Other Type",
         comments: [ "Work tied to an issue" ],
