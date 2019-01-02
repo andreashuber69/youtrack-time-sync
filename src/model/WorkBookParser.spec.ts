@@ -26,6 +26,13 @@ const loadTestSheet = async (name: string) => {
     return read(new Uint8Array(await readBlob(await response.blob())), { type: "array" });
 };
 
+const expectError = (expectation: string, workBookName: string, message: string) => {
+    it(expectation, async () => {
+        const workBook = await loadTestSheet(workBookName);
+        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError(message);
+    });
+};
+
 describe("WorkBookParser.parse", () => {
     it("should parse work book without week sheets", async () => {
         const workBook = await loadTestSheet("NoWeekSheets.xlsm");
@@ -33,29 +40,32 @@ describe("WorkBookParser.parse", () => {
         expect([ ...WorkBookParser.parse(workBook) ]).toEqual([]);
     });
 
-    it("should fail to parse an empty sheet", async () => {
-        const workBook = await loadTestSheet("Empty.xlsm");
+    expectError("should fail to parse an empty sheet", "Empty.xlsm", "The sheet Week01 seems to be empty.");
 
-        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError("The sheet Week01 seems to be empty.");
-    });
+    expectError(
+        "should fail to parse a sheet with columns shortfall",
+        "NotEnoughColumns.xlsm", "The sheet Week01 has an unexpected range: A1:F5.");
 
-    it("should fail to parse a sheet with columns shortfall", async () => {
-        const workBook = await loadTestSheet("NotEnoughColumns.xlsm");
-
-        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError(
-            "The sheet Week01 has an unexpected range: A1:F5.");
-    });
-
-    it("should fail to parse a sheet with rows shortfall", async () => {
-        const workBook = await loadTestSheet("NotEnoughRows.xlsm");
-
-        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError(
-            "The sheet Week01 has an unexpected range: A1:G4.");
-    });
+    expectError(
+        "should fail to parse a sheet with rows shortfall",
+        "NotEnoughRows.xlsm", "The sheet Week01 has an unexpected range: A1:G4.");
 
     it("should parse a sheet with a single row", async () => {
         const workBook = await loadTestSheet("SingleRow.xlsm");
 
         expect([ ...WorkBookParser.parse(workBook) ]).toEqual([]);
     });
+
+    const emptyMessage = "In sheet Week01, C5 and D5 must either be both empty or non-empty.";
+
+    expectError("should fail to parse a sheet with a row with an empty start", "EmptyStart.xlsm", emptyMessage);
+    expectError("should fail to parse a sheet with a row with an empty end", "EmptyEnd.xlsm", emptyMessage);
+
+    const wrongTypeMessage = "In sheet Week01, C5 and D5 must both be dates.";
+
+    expectError(
+        "should fail to parse a sheet with a row with a wrongly typed start", "WrongTypeStart.xlsm", wrongTypeMessage);
+
+    expectError(
+        "should fail to parse a sheet with a row with a wrongly typed end", "WrongTypeEnd.xlsm", wrongTypeMessage);
 });
