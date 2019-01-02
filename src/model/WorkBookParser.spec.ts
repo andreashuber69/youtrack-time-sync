@@ -58,6 +58,7 @@ describe("WorkBookParser.parse", () => {
         {
             date: new Date(Date.UTC(2019, 0, 2)),
             title: "FB-42",
+            type: undefined,
             comments: [ "Work without a type" ],
             isPaidAbsence: false,
             durationMinutes: 360,
@@ -73,6 +74,7 @@ describe("WorkBookParser.parse", () => {
         {
             date: new Date(Date.UTC(2019, 0, 4)),
             title: "FB-44",
+            type: undefined,
             comments: [],
             isPaidAbsence: false,
             durationMinutes: 360,
