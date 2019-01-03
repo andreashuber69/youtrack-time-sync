@@ -5,6 +5,9 @@ nodejs:
 addons:
   chrome: stable
 
+scripts:
+  npm run ci
+
 deploy:
   provider: pages
   skip-cleanup: true
