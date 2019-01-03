@@ -54,7 +54,7 @@ describe("WorkBookParser.parse", () => {
         "should fail to parse a sheet with rows shortfall",
         "NotEnoughRows.xlsm", "The sheet Week01 has an unexpected range: A1:G4.");
 
-    const times = [
+    const expectedTimes = [
         {
             date: new Date(Date.UTC(2019, 0, 2)),
             title: "FB-42",
@@ -89,7 +89,7 @@ describe("WorkBookParser.parse", () => {
         },
     ];
 
-    expectResult("should parse a sheet with correct rows", "CorrectRows.xlsm", times);
+    expectResult("should parse a sheet with correct rows", "CorrectRows.xlsm", expectedTimes);
 
     const emptyMessage = "In sheet Week01, C5 and D5 must either be both empty or non-empty.";
     expectError("should fail to parse a sheet with a row with an empty start", "EmptyStart.xlsm", emptyMessage);
@@ -100,4 +100,17 @@ describe("WorkBookParser.parse", () => {
         "should fail to parse a sheet with a row with a wrongly typed start", "WrongTypeStart.xlsm", wrongTypeMessage);
     expectError(
         "should fail to parse a sheet with a row with a wrongly typed end", "WrongTypeEnd.xlsm", wrongTypeMessage);
+
+    expectError(
+        "should fail to parse a sheet with a row with a missing title", "MissingTitle.xlsm",
+        "In sheet Week01, E5 must not be empty.");
+    expectError(
+        "should fail to parse a sheet with a row with a negative spent time", "NegativeSpentTime.xlsm",
+        "In sheet Week01, C5 must be smaller than D5.");
+    expectError(
+        "should fail to parse a sheet with a row with a spent time too large", "SpentTimeTooLarge.xlsm",
+        "In sheet Week01, on row 5 the spent time must be smaller than 1 day.");
+    expectError(
+        "should fail to parse a sheet with a row with holidays and OPA", "HolidaysAndOpa.xlsm",
+        "In sheet Week01, A5 and B5 cannot both be non-empty.");
 });
