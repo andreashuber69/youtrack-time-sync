@@ -1,6 +1,7 @@
 env:
   global:
     - CC_TEST_REPORTER_ID=5cf22bc5b78d015c82a96ab407a2bd17bf34a4d28a9dce8320f7c87a84392824
+    - COVERAGE_FILE=./coverage/lcov.lcov
     
 language: node_js
 nodejs:
