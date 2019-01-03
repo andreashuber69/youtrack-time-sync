@@ -2,6 +2,9 @@ language: node_js
 nodejs:
   - 8
 
+addons:
+  chrome: stable
+
 branches:
   only:
   - /^v\d+\.\d+\.\d+$/
