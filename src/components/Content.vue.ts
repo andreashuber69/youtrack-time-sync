@@ -12,8 +12,8 @@
 
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { ExcelYouTrackSpentTimeUtility } from "../model/ExcelYouTrackSpentTimeUtility";
+import { ISpentTime } from "../model/ISpentTime";
 import { Model } from "../model/Model";
-import { ISpentTime } from "../model/SpentTimes";
 import { IIssueWorkItem, IUser, YouTrack } from "../model/YouTrack";
 import StatusSnackbar from "./StatusSnackbar.vue";
 

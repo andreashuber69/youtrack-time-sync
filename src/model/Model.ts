@@ -11,7 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Application } from "./Application";
-import { ISpentTime } from "./SpentTimes";
+import { ISpentTime } from "./ISpentTime";
 
 /** Represents the main model of the application. */
 export class Model {
