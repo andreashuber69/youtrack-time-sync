@@ -119,4 +119,6 @@ describe("WorkBookParser.parse", () => {
     expectError(
         "should fail to parse a sheet with a row with spent time and formula", "SpentTimeWithFormula.xlsm",
         "In sheet Week01, C5 and D5 must either be both values or both formulas.");
+
+    expectResult("should parse empty template", "2019.xlsm", []);
 });
