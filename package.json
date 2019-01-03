@@ -28,7 +28,7 @@
     "prelint": "cspell '**/*.*'",
     "lint": "tslint --project tsconfig.json --config tslint.json --format verbose",
     "test": "karma start --browsers Chrome",
-    "watch-coverage": "cd ./coverage/*/html && lite-server",
+    "watch-coverage": "cd ./coverage/html && lite-server",
     "ci": "karma start --browsers ChromeHeadless"
   },
   "dependencies": {
