@@ -10,29 +10,7 @@
 // You should have received a copy of the GNU General Public License along with this program. If not, see
 // <http://www.gnu.org/licenses/>.
 
-/** Represents working time spent on a particular issue. */
-export interface ISpentTime {
-    /** The date of the day the work was done. */
-    readonly date: Date;
-
-    /** The title of the work, usually the issue id assigned by a issue tracking server. */
-    readonly title: string;
-
-    /** The type of the work. */
-    readonly type?: string;
-
-    /** Whether or not this is a paid absence. */
-    readonly isPaidAbsence: boolean;
-
-    /** The summary of the issue the time was spent on, usually retrieved from the issue tracking server. */
-    summary?: string;
-
-    /** A comment further describing the work done. */
-    comments: string[];
-
-    /** The number of minutes spent. */
-    durationMinutes: number;
-}
+import { ISpentTime } from "./ISpentTime";
 
 /**
  * @summary Implements a container that can be used to establish the difference between the spent times kept locally and

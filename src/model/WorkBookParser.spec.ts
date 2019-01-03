@@ -1,5 +1,5 @@
 import { read } from "xlsx";
-import { ISpentTime } from "./SpentTimes";
+import { ISpentTime } from "./ISpentTime";
 import { WorkBookParser } from "./WorkBookParser";
 
 const readBlob = (blob: Blob) =>

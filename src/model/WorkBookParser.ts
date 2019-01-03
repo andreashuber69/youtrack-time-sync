@@ -11,7 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { WorkBook, WorkSheet } from "xlsx";
-import { ISpentTime } from "./SpentTimes";
+import { ISpentTime } from "./ISpentTime";
 
 interface ICell<T> {
     readonly v: T;
