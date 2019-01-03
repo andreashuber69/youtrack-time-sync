@@ -9,11 +9,15 @@ module.exports = function(config) {
             "**/*.ts": [ "karma-typescript" ]
         },
         reporters: [ "dots", "karma-typescript" ],
-        browsers: [ "Chrome" ],
-
+        browsers: [ "Chrome", "ChromeNoSandbox" ],
+        customLaunchers: {
+            ChromeNoSandbox: {
+                base: "Chrome",
+                flags: [ "--no-sandbox" ]
+            }
+        },
         // Set this to false while debugging
         singleRun: true,
-
         karmaTypescriptConfig: {
             bundlerOptions: {
                 entrypoints: /\.spec\.ts$/,

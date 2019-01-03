@@ -27,7 +27,7 @@
     "build": "cross-env WEBPACK_BASE_URL=/youtrack-time-sync vue-cli-service build",
     "prelint": "cspell '**/*.*'",
     "lint": "tslint --project tsconfig.json --config tslint.json --format verbose",
-    "test": "karma start",
+    "test": "karma start --browsers ChromeNoSandbox",
     "watch-coverage": "cd ./coverage/*/html && lite-server"
   },
   "dependencies": {
