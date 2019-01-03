@@ -6,7 +6,7 @@ addons:
   chrome: stable
 
 scripts:
-  npm run ci
+  - npm run ci
 
 deploy:
   provider: pages
