@@ -16,8 +16,10 @@ module.exports = function(config) {
 
         karmaTypescriptConfig: {
             bundlerOptions: {
+                entrypoints: /\.spec\.ts$/,
                 sourceMap: true
             },
+            compilerDelay: 3000,
             compilerOptions: {
                 module: "commonjs"
             },
