@@ -9,7 +9,7 @@ module.exports = function(config) {
             "**/*.ts": [ "karma-typescript" ]
         },
         reporters: [ "dots", "karma-typescript" ],
-        browsers: [ "Chromium" ],
+        browsers: [ "Chrome" ],
 
         // Set this to false while debugging
         singleRun: true,
