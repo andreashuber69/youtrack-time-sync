@@ -113,4 +113,10 @@ describe("WorkBookParser.parse", () => {
     expectError(
         "should fail to parse a sheet with a row with holidays and OPA", "HolidaysAndOpa.xlsm",
         "In sheet Week01, A5 and B5 cannot both be non-empty.");
+    expectError(
+        "should fail to parse a sheet with a row with holidays without end formula", "HolidaysWithoutEndFormula.xlsm",
+        "In sheet Week01, D5 must be a formula.");
+    expectError(
+        "should fail to parse a sheet with a row with spent time and formula", "SpentTimeWithFormula.xlsm",
+        "In sheet Week01, C5 and D5 must either be both values or both formulas.");
 });
