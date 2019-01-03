@@ -3,7 +3,7 @@ nodejs:
   - 8
 
 addons:
-  chrome: stable
+  chromium: stable
 
 deploy:
   provider: pages
