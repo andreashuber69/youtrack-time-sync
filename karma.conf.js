@@ -25,6 +25,17 @@ module.exports = function(config) {
                 // Set this to false while debugging
                 instrumentation: true
             },
+            reports: {
+                lcovonly: {
+                    directory: "coverage",
+                    subdirectory: ".",
+                    filename: "lcov.lcov"
+                },
+                html: {
+                    directory: "coverage",
+                    subdirectory: "."
+                }
+            },
             tsconfig: "./tsconfig.json"
         }
     });
