@@ -11,7 +11,8 @@ const readBlob = (blob: Blob) =>
     });
 
 const loadTestSheet = async (name: string) => {
-    const url = `https://raw.githubusercontent.com/andreashuber69/youtrack-time-sync/master/src/model/test/${name}`;
+    const root = "https://raw.githubusercontent.com/andreashuber69/youtrack-time-sync/master";
+    const url = `${root}/src/model/WorkBookParser.spec/${name}`;
     let response: Response;
 
     try {
