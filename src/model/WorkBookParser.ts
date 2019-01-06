@@ -38,9 +38,7 @@ interface ISheet {
 export class WorkBookParser {
     public static * parse(workBook: WorkBook): IterableIterator<ISpentTime> {
         for (const sheetName of workBook.SheetNames) {
-            for (const time of this.parseSheet({ name: sheetName, workSheet: workBook.Sheets[sheetName] })) {
-                yield time;
-            }
+            yield * this.parseSheet({ name: sheetName, workSheet: workBook.Sheets[sheetName] });
         }
     }
 
