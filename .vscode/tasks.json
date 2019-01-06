@@ -52,7 +52,7 @@
     },
     {
       "type": "npm",
-      "script": "watch-coverage",
+      "script": "show-coverage",
       "problemMatcher": []
     }
   ]
