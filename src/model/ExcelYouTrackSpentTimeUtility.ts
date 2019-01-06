@@ -11,6 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { read } from "xlsx";
+import { BlobUtility } from "./BlobUtility";
 import { SpentTimes } from "./SpentTimes";
 import { WorkBookParser } from "./WorkBookParser";
 import { IIssueWorkItem, IUser, YouTrack } from "./YouTrack";
@@ -20,7 +21,7 @@ import { IIssueWorkItem, IUser, YouTrack } from "./YouTrack";
  */
 export class ExcelYouTrackSpentTimeUtility {
     public static async create(excelFile: File) {
-        return new ExcelYouTrackSpentTimeUtility(await this.read(excelFile));
+        return new ExcelYouTrackSpentTimeUtility(await BlobUtility.toArrayBuffer(excelFile));
     }
 
     public async subtractExistingSpentTimes(youTrack: YouTrack, currentUser: IUser) {
@@ -57,15 +58,6 @@ export class ExcelYouTrackSpentTimeUtility {
                 durationMinutes: workItem.duration.minutes,
             };
         }
-    }
-
-    private static read(blob: Blob) {
-        return new Promise<ArrayBuffer>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (ev) => resolve(reader.result as ArrayBuffer);
-            reader.onerror = (ev) => reject("Unable to read file.");
-            reader.readAsArrayBuffer(blob);
-        });
     }
 
     private readonly spentTimes: SpentTimes;

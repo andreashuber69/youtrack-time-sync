@@ -2,6 +2,7 @@ module.exports = function(config) {
     config.set({
         frameworks: [ "jasmine", "karma-typescript" ],
         files: [
+            "src/model/BlobUtility.ts",
             "src/model/WorkBookParser.spec.ts",
             "src/model/WorkBookParser.ts",
             { 

@@ -1,14 +1,7 @@
 import { read } from "xlsx";
+import { BlobUtility } from "./BlobUtility";
 import { ISpentTime } from "./ISpentTime";
 import { WorkBookParser } from "./WorkBookParser";
-
-const readBlob = (blob: Blob) =>
-    new Promise<ArrayBuffer>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => resolve(reader.result as ArrayBuffer);
-        reader.onerror = (ev) => reject("Unable to read file.");
-        reader.readAsArrayBuffer(blob);
-    });
 
 const loadTestSheet = async (name: string) => {
     const url = `/base/src/model/WorkBookParser.spec/${name}`;
@@ -24,7 +17,7 @@ const loadTestSheet = async (name: string) => {
         throw new Error(`Response Status: ${response.status} ${response.statusText}`);
     }
 
-    return read(new Uint8Array(await readBlob(await response.blob())), { type: "array" });
+    return read(new Uint8Array(await BlobUtility.toArrayBuffer(await response.blob())), { type: "array" });
 };
 
 const expectResult = (expectation: string, workBookName: string, expected: ISpentTime[]) => {
