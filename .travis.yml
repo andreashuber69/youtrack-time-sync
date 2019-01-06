@@ -15,7 +15,7 @@ script:
 
 after_script:
   - ./cc-test-reporter format-coverage --input-type lcov ./coverage/lcov.lcov
-  - ./cc-test-reporter upload-coverage --id $TEST_REPORTER_ID
+  - ./cc-test-reporter upload-coverage --id $CODECLIMATE_TEST_REPORTER_ID
   
 deploy:
   provider: pages
