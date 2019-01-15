@@ -87,9 +87,9 @@ export class WorkBookParser {
         return [ corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10) ];
     }
 
-    private static hasCorrectSize(leftTop: [ string, number ], rightBottom: [ string, number ], firstDataRow: number) {
-        return (leftTop[0] !== "A") || (leftTop[1] !== 1) ||
-            (rightBottom[0] !== "G") || (rightBottom[1] < firstDataRow);
+    private static hasCorrectSize(
+        [ left, top ]: [ string, number ], [ right, bottom ]: [ string, number ], firstDataRow: number) {
+        return (left !== "A") || (top !== 1) || (right !== "G") || (bottom < firstDataRow);
     }
 
     private static * iterateRows(firstDataRow: number, bottom: number, sheet: ISheet) {
