@@ -25,6 +25,8 @@
         "**/*.svg",
         "cspell.json",
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "src/model/WorkBookParser.spec/**",
+        "karma.conf.js"
     ]
 }
