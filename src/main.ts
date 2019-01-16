@@ -21,6 +21,5 @@ import "./plugins/vuetify";
 Vue.config.productionTip = false;
 
 new Vue({
-    // tslint:disable-next-line:no-unsafe-any
     render: (h) => h(App),
 }).$mount("#app");

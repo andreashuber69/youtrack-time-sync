@@ -13,10 +13,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Application } from "../model/Application";
 
-// tslint:disable-next-line:no-unsafe-any
 @Component
 /** Implements the About dialog. */
-// tslint:disable-next-line:no-default-export no-unsafe-any
+// tslint:disable-next-line:no-default-export
 export default class AboutDialog extends Vue {
     /** Provides a value indicating whether the dialog is currently open. */
     public isOpen = false;

@@ -141,7 +141,6 @@ export default class Content extends Vue {
         this.fileError = null;
         // tslint:disable-next-line:no-null-keyword
         this.networkError = null;
-        // tslint:disable-next-line:no-unsafe-any
         (this.$refs.excelFileField as HTMLInputElement).focus();
 
         if (!files || (files.length !== 1)) {
