@@ -17,7 +17,6 @@ import AboutDialog from "./components/AboutDialog.vue";
 import Content from "./components/Content.vue";
 import { Model } from "./model/Model";
 
-// tslint:disable-next-line:no-unsafe-any
 @Component({ components: { AboutDialog, Content } })
 // tslint:disable-next-line:no-default-export
 export default class App extends Vue {
@@ -30,7 +29,6 @@ export default class App extends Vue {
 
     public onAboutClicked(event: MouseEvent) {
         this.isDrawerVisible = false;
-        // tslint:disable-next-line:no-unsafe-any
         (this.$refs.aboutDialog as AboutDialog).showDialog();
     }
 }

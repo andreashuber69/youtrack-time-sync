@@ -53,8 +53,6 @@ export class WorkBookParser {
 
     private static * parseSheet(sheet: ISheet) {
         if (!sheet.name.startsWith("Week")) {
-            // False positive, this rule should not apply to generators.
-            // tslint:disable-next-line:return-undefined
             return;
         }
 
@@ -115,8 +113,6 @@ export class WorkBookParser {
         const period = this.getPeriod(row);
 
         if (!period) {
-            // False positive, this rule should not apply to generators.
-            // tslint:disable-next-line:return-undefined
             return;
         }
 
@@ -125,8 +121,6 @@ export class WorkBookParser {
         const [ isPaidAbsenceInit, titleInit ] = this.getWorkDetail(row, start, end);
 
         if (start.f !== undefined) {
-            // False positive, this rule should not apply to generators.
-            // tslint:disable-next-line:return-undefined
             return;
         }
 
