@@ -20,13 +20,14 @@
         ],
     "flagWords": [],
     "ignorePaths": [
+        "**/*.svg",
+        "coverage/**",
         "dist/**",
         "node_modules/**",
-        "**/*.svg",
-        "cspell.json",
-        "package.json",
-        "package-lock.json",
         "src/model/WorkBookParser.spec/**",
-        "karma.conf.js"
+        "cspell.json",
+        "karma.conf.js",
+        "package.json",
+        "package-lock.json"
     ]
 }

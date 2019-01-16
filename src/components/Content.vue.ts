@@ -15,6 +15,7 @@ import { ExcelYouTrackSpentTimeUtility } from "../model/ExcelYouTrackSpentTimeUt
 import { ISpentTime } from "../model/ISpentTime";
 import { Model } from "../model/Model";
 import { IIssueWorkItem, IUser, YouTrack } from "../model/YouTrack";
+// tslint:disable-next-line:no-default-import
 import StatusSnackbar from "./StatusSnackbar.vue";
 
 @Component({ components: { StatusSnackbar } })
