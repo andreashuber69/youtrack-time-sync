@@ -13,7 +13,7 @@
 
 // tslint:disable-next-line:ordered-imports
 import Vue from "vue";
-// tslint:disable-next-line:match-default-export-name
+// tslint:disable-next-line:no-default-import
 import App from "./App.vue";
 // tslint:disable-next-line:no-import-side-effect
 import "./plugins/vuetify";
