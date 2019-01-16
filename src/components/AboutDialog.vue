@@ -1,5 +1,5 @@
 <!--
-   Copyright (C) 2018 Andreas Huber Dönni
+   Copyright (C) 2018-2019 Andreas Huber Dönni
 
    This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
    License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -20,7 +20,7 @@
         <v-layout row wrap>
           <v-flex xs12>
             <v-card flat>
-              <v-card-text class="subheading px-0">Copyright &copy; 2018 Andreas Huber Dönni</v-card-text>
+              <v-card-text class="subheading px-0">Copyright &copy; 2018-{{ new Date(Date.now()).getUTCFullYear() }} Andreas Huber Dönni</v-card-text>
             </v-card>
           </v-flex> 
           <v-flex xs12 sm4>
