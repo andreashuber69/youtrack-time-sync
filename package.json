@@ -29,6 +29,7 @@
     "lint": "tslint --project tsconfig.json --config tslint.json --format verbose",
     "test": "karma start --browsers Chrome",
     "show-coverage": "lite-server --baseDir='coverage/html'",
+    "preci": "npm run build",
     "ci": "karma start --browsers ChromeHeadless"
   },
   "dependencies": {
