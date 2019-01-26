@@ -14,6 +14,7 @@
 import Vue from "vue";
 // tslint:disable-next-line:no-submodule-imports
 import Vuetify from "vuetify/lib";
+// cSpell: ignore styl
 // tslint:disable-next-line:no-submodule-imports no-import-side-effect
 import "vuetify/src/stylus/app.styl";
 

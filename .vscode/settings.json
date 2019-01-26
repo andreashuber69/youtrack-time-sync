@@ -26,5 +26,5 @@
   "cSpell.import": [ "../cspell.json" ],
   "files.autoSave": "afterDelay",
   "git.confirmSync": false,
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
