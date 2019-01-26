@@ -6,7 +6,6 @@
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "importHelpers": true,
     "lib": [ "esnext", "dom", "dom.iterable", "scripthost" ],
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
@@ -21,18 +20,16 @@
       "webpack-env",
     ],
     // Generation options
-    "module": "esnext",
-    "jsx": "preserve",
-    "sourceMap": true,
-    "target": "es5",
     "esModuleInterop": true,
+    "importHelpers": true,
+    "jsx": "preserve",
+    "module": "esnext",
+    "sourceMap": true,
+    "target": "es5"
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "src/**/*.vue"
   ],
   "exclude": [
     "node_modules"
