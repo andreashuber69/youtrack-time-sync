@@ -11,12 +11,11 @@
 // You should have received a copy of the GNU General Public License along with this program. If not, see
 // <http://www.gnu.org/licenses/>.
 
-// tslint:disable-next-line:ordered-imports
 import Vue from "vue";
-// tslint:disable-next-line:no-default-import
-import App from "./App.vue";
 // tslint:disable-next-line:no-import-side-effect
 import "./plugins/vuetify";
+// tslint:disable-next-line:no-default-import ordered-imports
+import App from "./App.vue";
 
 Vue.config.productionTip = false;
 
