@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     // Compilation options
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "downlevelIteration": true,
     "experimentalDecorators": true,
