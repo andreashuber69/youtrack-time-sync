@@ -17,7 +17,7 @@
     "types": [
       "jasmine",
       "vuetify", // https://github.com/vuetifyjs/vue-cli-plugin-vuetify/issues/43#issuecomment-435088739
-      "webpack-env",
+      "webpack-env"
     ],
     // Generation options
     "esModuleInterop": true,
