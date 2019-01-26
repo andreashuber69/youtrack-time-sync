@@ -3,31 +3,30 @@
     "language": "en",
     "words": [
         "Andreas",
-        "autofocus",
         "codebeat",
         "Dönni",
-        "downlevel",
-        "esnext",
-        "interop",
-        "nbsp",
-        "scripthost",
         "snackbar",
-        "styl",
         "submodule",
         "vuetify",
         "xlsm",
         "youtrack"
-        ],
+    ],
     "flagWords": [],
+    "dictionaries": [
+        "css",
+        "fonts",
+        "html",
+        "typescript"
+    ],
     "ignorePaths": [
         "**/*.svg",
         "coverage/**",
         "dist/**",
         "node_modules/**",
         "src/model/WorkBookParser.spec/**",
-        "cspell.json",
         "karma.conf.js",
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "tsconfig.json"
     ]
 }
