@@ -11,6 +11,9 @@ const karmaTypescriptConfig = {
         // Set this to false while debugging
         instrumentation: true
     },
+    include:  [
+        "src/model/WorkBookParser.spec.ts"
+    ],
     reports: {
         lcovonly: {
             directory: "coverage",
