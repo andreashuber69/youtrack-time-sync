@@ -1,32 +1,32 @@
 {
-    "version": "0.1",
-    "language": "en",
-    "words": [
-        "Andreas",
-        "codebeat",
-        "Dönni",
-        "snackbar",
-        "submodule",
-        "vuetify",
-        "xlsm",
-        "youtrack"
-    ],
-    "flagWords": [],
-    "dictionaries": [
-        "css",
-        "fonts",
-        "html",
-        "typescript"
-    ],
-    "ignorePaths": [
-        "**/*.svg",
-        "coverage/**",
-        "dist/**",
-        "node_modules/**",
-        "src/model/WorkBookParser.spec/**",
-        "karma.conf.js",
-        "package.json",
-        "package-lock.json",
-        "tsconfig.json"
-    ]
+  "version": "0.1",
+  "language": "en",
+  "words": [
+    "Andreas",
+    "codebeat",
+    "Dönni",
+    "snackbar",
+    "submodule",
+    "vuetify",
+    "xlsm",
+    "youtrack"
+  ],
+  "flagWords": [],
+  "dictionaries": [
+    "css",
+    "fonts",
+    "html",
+    "typescript"
+  ],
+  "ignorePaths": [
+    "**/*.svg",
+    "coverage/**",
+    "dist/**",
+    "node_modules/**",
+    "src/model/WorkBookParser.spec/**",
+    "karma.conf.js",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json"
+  ]
 }
