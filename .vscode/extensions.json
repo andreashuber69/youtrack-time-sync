@@ -13,7 +13,7 @@
 {
   "recommendations": [
     "davidanson.vscode-markdownlint",
-    "eg2.tslint",
+    "ms-vscode.vscode-typescript-tslint-plugin",
     "eg2.vscode-npm-script",
     "octref.vetur",
     "prograhammer.tslint-vue",
