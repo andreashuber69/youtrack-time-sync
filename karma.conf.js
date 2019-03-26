@@ -11,9 +11,17 @@ const karmaTypescriptConfig = {
         // Set this to false while debugging
         instrumentation: true
     },
-    include:  [
-        "src/model/WorkBookParser.spec.ts"
-    ],
+    include: {
+        mode: "replace",
+        values: [
+            "src/model/BlobUtility.ts",
+            "src/model/WorkBookParser.*",
+        ]
+    },
+    exclude: {
+        mode: "replace",
+        values: []
+    },
     reports: {
         lcovonly: {
             directory: "coverage",
@@ -33,8 +41,7 @@ module.exports = function(config) {
         frameworks: [ "jasmine", "karma-typescript" ],
         files: [
             "src/model/BlobUtility.ts",
-            "src/model/WorkBookParser.spec.ts",
-            "src/model/WorkBookParser.ts",
+            "src/model/WorkBookParser.*",
             { 
                 pattern: "src/model/WorkBookParser.spec/*.xlsm",
                 included: false,
