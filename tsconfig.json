@@ -27,6 +27,9 @@
     "target": "es5"
   },
   "include": [
-    "src/main.ts"
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
   ]
 }
