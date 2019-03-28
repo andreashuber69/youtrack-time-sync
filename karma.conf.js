@@ -18,10 +18,6 @@ const karmaTypescriptConfig = {
             "src/model/WorkBookParser.*",
         ]
     },
-    exclude: {
-        mode: "replace",
-        values: []
-    },
     reports: {
         lcovonly: {
             directory: "coverage",
