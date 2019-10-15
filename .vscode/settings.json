@@ -24,7 +24,8 @@
     "yaml"
   ],
   "cSpell.import": [ "../cspell.json" ],
-  "files.autoSave": "afterDelay",
+  "files.autoSave": "onFocusChange",
   "git.confirmSync": false,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.quoteStyle": "double"
 }
