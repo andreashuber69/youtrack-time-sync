@@ -29,3 +29,9 @@ deploy:
   verbose: true
   on:
     tags: true
+
+notifications:
+  email:
+    recipients:
+      - secure: "eWbGzXfGPPed3c43k7ejP6gkcArD8Z8ngdhtzt/oX3s6i+vi5JfOFX6zIKDWfcQEEon5XNwvcC/ciPMVMGMDYPBsdsTgKXGrzIgi5u1+2w2wgjAHV9A0Dj4a8zjF9Q+li3pfsRA+4K7LqLEq/SIJ6N9HUiDCvpVuu/uetV2s+f1LGuresuMiwBcJWIgceznG+/MY3l4sDw9RNN3otP8OujwxkJpsLSnIsq3xHSxnkmwqaEnpWG8tcLJNvOLZPRQig/ys3AduBIWKe5ghcsR32pcxoFP/V+SLvSsULXYpJBxU09qTO2ldCf/2TdGS61pPBOaMeSlwV7X/zI8wDElOwqt81tag9h8QKhDHePCDTT0KsPHAvA1CLk6mxNnsz7oOpTFCPeq01oLeYCEvgdnp+RMgU5YysBidromG2wajaYLRsZ0aqWAmerZbm5/7hH7nPSJRXMQbz+Z6nTvrJeSSVGtxcY4ry8Qj6Uwjeb20WjfAunBnawwpTQlGLltMDNhTi94zjMdmnuBYWblqXjY0adbOkEXpZTiySAD5L4iOjb+VMarlferL7E/Hc+YvrK0yUjR8y4IMv3E9mMd/+haL7YiFeMwwqb8iX8DX4SUVleZEsJxcGQgQgUMqGiYMyZCDQrsCkWzdr641pCwZadw1Vl7zUjUKpzaW/EIZiEtLOjE="
+    on_success: always
