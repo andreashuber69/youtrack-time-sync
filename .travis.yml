@@ -17,7 +17,7 @@ after_script:
   - ./cc-test-reporter format-coverage --input-type lcov ./coverage/lcov.lcov
   - ./cc-test-reporter upload-coverage --id $CODECLIMATE_TEST_REPORTER_ID
   - export CODECLIMATE_API_HOST=https://codebeat.co/webhooks/code_coverage
-  - export CODECLIMATE_REPO_TOKEN=$CODEBEAT_PROJECT_UUID
+  - export CODECLIMATE_REPO_TOKEN=d77b55df-5cef-4184-afec-16211259ad8b
   - npx codeclimate-test-reporter < coverage/lcov.lcov
   
 deploy:
