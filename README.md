@@ -15,13 +15,13 @@
     <img src="https://img.shields.io/github/issues-raw/andreashuber69/youtrack-time-sync.svg" alt="Issues">
   </a>
   <a href="https://codebeat.co/projects/github-com-andreashuber69-youtrack-time-sync-master">
-    <img src="https://codebeat.co/badges/aa563209-0fd7-4b09-b3b2-94e8a055564c" alt="Codebeat">
+    <img src="https://codebeat.co/badges/d77b55df-5cef-4184-afec-16211259ad8b" alt="Codebeat">
   </a>
   <a href="https://codeclimate.com/github/andreashuber69/youtrack-time-sync/maintainability">
-    <img src="https://api.codeclimate.com/v1/badges/1a56d04421ad45310979/maintainability" alt="CC Maintainability">
+    <img src="https://api.codeclimate.com/v1/badges/7bb767f7ed34a79dd9ef/maintainability" alt="CC Maintainability">
   </a>
   <a href="https://codeclimate.com/github/andreashuber69/youtrack-time-sync/test_coverage">
-    <img src="https://api.codeclimate.com/v1/badges/1a56d04421ad45310979/test_coverage"  alt="CC Test Coverage">
+    <img src="https://api.codeclimate.com/v1/badges/7bb767f7ed34a79dd9ef/test_coverage"  alt="CC Test Coverage">
   </a>
   <a href="https://github.com/andreashuber69/youtrack-time-sync/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/andreashuber69/youtrack-time-sync.svg" alt="License">
