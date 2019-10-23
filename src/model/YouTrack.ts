@@ -99,7 +99,8 @@ export class YouTrack {
         let result: IIssueWorkItem[];
 
         try {
-            result = await this.get<IIssueWorkItem[]>(YouTrack.getWorkItemsPath(issueId), YouTrack.workItemsParams);
+            result = await this.batchedGet<IIssueWorkItem[], IIssueWorkItem>(
+                YouTrack.getWorkItemsPath(issueId), YouTrack.workItemsParams);
         } catch (e) {
             throw new Error(
                 `Failed to get work items for issue id "${issueId}": ${e instanceof Error && e.message || e}`);
@@ -162,6 +163,30 @@ export class YouTrack {
 
     private get<T>(path: string, params?: Array<[ string, string ]>) {
         return this.fetch<T>(path, this.getInit("GET"), params);
+    }
+
+    private async batchedGet<T extends U[], U>(path: string, params?: Array<[ string, string ]>) {
+        const top = 30;
+        const result = new Array<U>();
+        let skip = 0;
+        let batch = await this.getBatch<T, U>(path, skip, top, params);
+        result.push(...batch);
+
+        while (batch.length === top) {
+            skip += top;
+            batch = await this.getBatch<T, U>(path, skip, top, params);
+            result.push(...batch);
+        }
+
+        return result;
+    }
+
+    private getBatch<T extends U[], U>(
+        path: string, skip: number, top: number, params?: Array<[string, string]>) {
+        const batchParams = [...(params || [])];
+        batchParams.push(["$skip", skip.toString()], ["$top", top.toString()]);
+
+        return this.get<T>(path, batchParams);
     }
 
     private post<T>(path: string, params?: Array<[ string, string ]>, body?: unknown) {
