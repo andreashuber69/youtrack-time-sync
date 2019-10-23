@@ -169,24 +169,22 @@ export class YouTrack {
         const top = 30;
         const result = new Array<U>();
         let skip = 0;
-        let batch = await this.getBatch<T, U>(path, skip, top, params);
-        result.push(...batch);
 
-        while (batch.length === top) {
+        while (await this.appendBatch<T, U>(result, path, skip, top, params)) {
             skip += top;
-            batch = await this.getBatch<T, U>(path, skip, top, params);
-            result.push(...batch);
         }
 
         return result;
     }
 
-    private getBatch<T extends U[], U>(
-        path: string, skip: number, top: number, params?: Array<[string, string]>) {
+    private async appendBatch<T extends U[], U>(
+        result: U[], path: string, skip: number, top: number, params?: Array<[string, string]>) {
         const batchParams = [...(params || [])];
         batchParams.push(["$skip", skip.toString()], ["$top", top.toString()]);
+        const batch = await this.get<T>(path, batchParams);
+        result.push(...batch);
 
-        return this.get<T>(path, batchParams);
+        return batch.length === top;
     }
 
     private post<T>(path: string, params?: Array<[ string, string ]>, body?: unknown) {
