@@ -181,10 +181,9 @@ export class YouTrack {
         result: U[], path: string, skip: number, top: number, params?: Array<[string, string]>) {
         const batchParams = [...(params || [])];
         batchParams.push(["$skip", skip.toString()], ["$top", top.toString()]);
-        const batch = await this.get<T>(path, batchParams);
-        result.push(...batch);
+        result.push(...await this.get<T>(path, batchParams));
 
-        return batch.length === top;
+        return result.length === skip + top;
     }
 
     private post<T>(path: string, params?: Array<[ string, string ]>, body?: unknown) {
