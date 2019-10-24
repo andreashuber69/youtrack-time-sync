@@ -178,9 +178,7 @@ export class YouTrack {
 
     private async appendBatch<U>(result: U[], path: string, params: Array<[string, string]>, skip: number) {
         const top = 30;
-        const batchParams: Array<[string, string]> =
-            [...params, ["$skip", skip.toString()], ["$top", top.toString()]];
-        result.push(...await this.get<U[]>(path, batchParams));
+        result.push(...await this.get<U[]>(path, [...params, ["$skip", skip.toString()], ["$top", top.toString()]]));
 
         return (result.length === skip + top) ? result.length : 0;
     }
