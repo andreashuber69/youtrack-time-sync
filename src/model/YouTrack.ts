@@ -99,7 +99,7 @@ export class YouTrack {
         let result: IIssueWorkItem[];
 
         try {
-            result = await this.batchedGet<IIssueWorkItem[], IIssueWorkItem>(
+            result = await this.batchedGet<IIssueWorkItem>(
                 YouTrack.getWorkItemsPath(issueId), YouTrack.workItemsParams);
         } catch (e) {
             throw new Error(
@@ -165,23 +165,22 @@ export class YouTrack {
         return this.fetch<T>(path, this.getInit("GET"), params);
     }
 
-    private async batchedGet<T extends U[], U>(path: string, params?: Array<[string, string]>) {
+    private async batchedGet<U>(path: string, params?: Array<[string, string]>) {
         const result = new Array<U>();
         let skip = 0;
 
         // tslint:disable-next-line: no-empty
-        while (skip = await this.appendBatch<T, U>(result, path, skip, params)) {
+        while (skip = await this.appendBatch(result, path, skip, params || [])) {
         }
 
         return result;
     }
 
-    private async appendBatch<T extends U[], U>(
-        result: U[], path: string, skip: number, params?: Array<[string, string]>) {
+    private async appendBatch<U>(result: U[], path: string, skip: number, params: Array<[string, string]>) {
         const top = 30;
-        const batchParams = [...(params || [])];
-        batchParams.push(["$skip", skip.toString()], ["$top", top.toString()]);
-        result.push(...await this.get<T>(path, batchParams));
+        const batchParams: Array<[string, string]> =
+            [...params, ["$skip", skip.toString()], ["$top", top.toString()]];
+        result.push(...await this.get<U[]>(path, batchParams));
 
         return (result.length === skip + top) ? result.length : 0;
     }
