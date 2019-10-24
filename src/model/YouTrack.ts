@@ -65,10 +65,10 @@ type Method = "GET" | "POST" | "PUT" | "DELETE";
 export class YouTrack {
     public constructor(private readonly baseUrl: string, authenticationToken: string) {
         this.headersInit = new Headers([
-            [ "Accept", "application/json" ],
-            [ "Authorization", `Bearer ${authenticationToken}` ],
-            [ "Cache-Control", "no-cache" ],
-            [ "Content-Type", "application/json" ],
+            ["Accept", "application/json"],
+            ["Authorization", `Bearer ${authenticationToken}`],
+            ["Cache-Control", "no-cache"],
+            ["Content-Type", "application/json"],
         ]);
     }
 
@@ -78,7 +78,7 @@ export class YouTrack {
 
     public async getIssue(issueId: string) {
         try {
-            const issue = await this.get<IIssue>(`youtrack/api/issues/${issueId}`, [[ "fields", "id,summary" ]]);
+            const issue = await this.get<IIssue>(`youtrack/api/issues/${issueId}`, [["fields", "id,summary"]]);
 
             // The YouTrack REST interface always returns issue IDs in the <number>-<number> format, but allows queries
             // in the <string>-<number> and the <number>-<number> format. The following makes sure that the returned
@@ -92,7 +92,7 @@ export class YouTrack {
     }
 
     public getIssues(issueIds: string[]) {
-        return Promise.all([ ...issueIds ].map((issueId) => this.getIssue(issueId)));
+        return Promise.all([...issueIds].map((issueId) => this.getIssue(issueId)));
     }
 
     public async getWorkItems(issueId: string) {
@@ -114,7 +114,7 @@ export class YouTrack {
     }
 
     public async getWorkItemsForUser(user: IUser, issueIds: string[]) {
-        const workItemsArray = await Promise.all([ ...issueIds ].map((issueId) => this.getWorkItems(issueId)));
+        const workItemsArray = await Promise.all([...issueIds].map((issueId) => this.getWorkItems(issueId)));
 
         return new Array<IIssueWorkItem>().concat(...workItemsArray).filter(
             (workItem) => workItem.creator.id === user.id);
@@ -122,7 +122,7 @@ export class YouTrack {
 
     public getWorkItemTypes() {
         return this.get<IWorkItemType[]>(
-            "youtrack/api/admin/timeTrackingSettings/workItemTypes", [[ "fields", "id,name" ]]);
+            "youtrack/api/admin/timeTrackingSettings/workItemTypes", [["fields", "id,name"]]);
     }
 
     public async createWorkItem(issueId: string, workItem: ICreateIssueWorkItem) {
@@ -136,8 +136,8 @@ export class YouTrack {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static readonly workItemsParams: [[ string, string ]] =
-        [[ "fields", "creator(id),date,duration(minutes),issue(id),text,type(name)" ]];
+    private static readonly workItemsParams: [[string, string]] =
+        [["fields", "creator(id),date,duration(minutes),issue(id),text,type(name)"]];
 
     private static getWorkItemsPath(issueId: string) {
         return `youtrack/api/issues/${issueId}/timeTracking/workItems`;
@@ -161,11 +161,11 @@ export class YouTrack {
 
     private readonly headersInit: Headers;
 
-    private get<T>(path: string, params?: Array<[ string, string ]>) {
+    private get<T>(path: string, params?: Array<[string, string]>) {
         return this.fetch<T>(path, this.getInit("GET"), params);
     }
 
-    private async batchedGet<T extends U[], U>(path: string, params?: Array<[ string, string ]>) {
+    private async batchedGet<T extends U[], U>(path: string, params?: Array<[string, string]>) {
         const result = new Array<U>();
         let skip = 0;
 
@@ -186,7 +186,7 @@ export class YouTrack {
         return (result.length === skip + top) ? result.length : 0;
     }
 
-    private post<T>(path: string, params?: Array<[ string, string ]>, body?: unknown) {
+    private post<T>(path: string, params?: Array<[string, string]>, body?: unknown) {
         return this.fetch<T>(path, this.getInit("POST", body), params);
     }
 
@@ -199,7 +199,7 @@ export class YouTrack {
         };
     }
 
-    private async fetch<T>(path: string, requestInit: RequestInit, params?: Array<[ string, string ]>) {
+    private async fetch<T>(path: string, requestInit: RequestInit, params?: Array<[string, string]>) {
         let response: Response;
         const url = new URL(path, this.baseUrl);
 
