@@ -170,13 +170,13 @@ export class YouTrack {
         let skip = 0;
 
         // tslint:disable-next-line: no-empty
-        while (skip = await this.appendBatch(result, path, skip, params || [])) {
+        while (skip = await this.appendBatch(result, path, params || [], skip)) {
         }
 
         return result;
     }
 
-    private async appendBatch<U>(result: U[], path: string, skip: number, params: Array<[string, string]>) {
+    private async appendBatch<U>(result: U[], path: string, params: Array<[string, string]>, skip: number) {
         const top = 30;
         const batchParams: Array<[string, string]> =
             [...params, ["$skip", skip.toString()], ["$top", top.toString()]];
