@@ -26,7 +26,7 @@ export default class Content extends Vue {
     public valid = false;
     public showToken = false;
 
-    public readonly rules = [ (value: unknown) => !!value || "A value is required." ];
+    public readonly rules = [(value: unknown) => !!value || "A value is required."];
     // tslint:disable-next-line:no-null-keyword
     public networkError: string | null = null;
     // tslint:disable-next-line:no-null-keyword
@@ -62,7 +62,7 @@ export default class Content extends Vue {
         try {
             this.isLoading = true;
             const workItemTypes = new Map<string, string>(
-                (await youTrack.getWorkItemTypes()).map((t) => [ t.name, t.id ] as [ string, string ]));
+                (await youTrack.getWorkItemTypes()).map((t) => [t.name, t.id] as [string, string]));
 
             for (const time of this.checkedModel.times) {
                 newSpentTimes.push(await Content.createWorkItem(youTrack, workItemTypes, time));

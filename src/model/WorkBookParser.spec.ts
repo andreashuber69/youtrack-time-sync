@@ -35,14 +35,14 @@ const loadTestSheet = async (name: string) => {
 const expectResult = (expectation: string, workBookName: string, expected: ISpentTime[]) => {
     it(expectation, async () => {
         const workBook = await loadTestSheet(workBookName);
-        expect([ ...WorkBookParser.parse(workBook) ]).toEqual(expected);
+        expect([...WorkBookParser.parse(workBook)]).toEqual(expected);
     });
 };
 
 const expectError = (expectation: string, workBookName: string, message: string) => {
     it(expectation, async () => {
         const workBook = await loadTestSheet(workBookName);
-        expect(() => [ ...WorkBookParser.parse(workBook) ]).toThrowError(message);
+        expect(() => [...WorkBookParser.parse(workBook)]).toThrowError(message);
     });
 };
 
@@ -64,7 +64,7 @@ describe("WorkBookParser.parse", () => {
             date: new Date(Date.UTC(2019, 0, 2)),
             title: "FB-42",
             type: undefined,
-            comments: [ "Work without a type" ],
+            comments: ["Work without a type"],
             isPaidAbsence: false,
             durationMinutes: 360,
         },
@@ -88,7 +88,7 @@ describe("WorkBookParser.parse", () => {
             date: new Date(Date.UTC(2019, 0, 5)),
             title: "FB-45",
             type: "Other Type",
-            comments: [ "Work tied to an issue" ],
+            comments: ["Work tied to an issue"],
             isPaidAbsence: false,
             durationMinutes: 360,
         },

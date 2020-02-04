@@ -23,7 +23,7 @@
     "vue",
     "yaml"
   ],
-  "cSpell.import": [ "../cspell.json" ],
+  "cSpell.import": ["../cspell.json"],
   "files.autoSave": "onFocusChange",
   "git.confirmSync": false,
   "typescript.tsdk": "node_modules/typescript/lib",

@@ -32,7 +32,7 @@ export class SpentTimes {
 
     /** Gets the unique titles of all spent times. */
     public uniqueTitles() {
-        return [ ...new Set([ ...this.map.values() ].map((time) => time.title)) ];
+        return [...new Set([...this.map.values()].map((time) => time.title))];
     }
 
     /** Subtracts the spent time already on the server. */
@@ -46,7 +46,7 @@ export class SpentTimes {
 
     /** Gets the remaining spent time entries. */
     public entries() {
-        const result = [ ...this.map.values() ];
+        const result = [...this.map.values()];
         result.sort((left, right) => SpentTimes.compare(left, right));
 
         return result;
@@ -71,7 +71,7 @@ export class SpentTimes {
     private readonly earliestLocalDate = Number.MAX_SAFE_INTEGER;
 
     private addSingle(time: ISpentTime) {
-        const [ key, existingTime ] = this.findExisting(time);
+        const [key, existingTime] = this.findExisting(time);
 
         if (existingTime) {
             existingTime.durationMinutes += time.durationMinutes;
@@ -82,7 +82,7 @@ export class SpentTimes {
     }
 
     private subtractSingle(time: ISpentTime) {
-        const [ key, existingTime ] = this.findExisting(time);
+        const [key, existingTime] = this.findExisting(time);
         this.roundDuration(time);
 
         if (!existingTime || (existingTime.durationMinutes < time.durationMinutes)) {
@@ -98,10 +98,10 @@ export class SpentTimes {
         }
     }
 
-    private findExisting(time: ISpentTime): [ string, ISpentTime | undefined ] {
+    private findExisting(time: ISpentTime): [string, ISpentTime | undefined] {
         const key = `${time.date.getTime()}|${time.title}|${time.type}`;
 
-        return [ key, this.map.get(key) ];
+        return [key, this.map.get(key)];
     }
 
     private roundDuration(time: ISpentTime) {

@@ -78,15 +78,15 @@ export class WorkBookParser {
         }
     }
 
-    private static split(corner: string, sheetName: string, range: string): [ string, number ] {
+    private static split(corner: string, sheetName: string, range: string): [string, number] {
         const rowIndex = corner.search("[0-9]+");
         this.checkRange(rowIndex < 0, sheetName, range);
 
-        return [ corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10) ];
+        return [corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10)];
     }
 
     private static hasCorrectSize(
-        [ left, top ]: [ string, number ], [ right, bottom ]: [ string, number ], firstDataRow: number) {
+        [left, top]: [string, number], [right, bottom]: [string, number], firstDataRow: number) {
         return (left !== "A") || (top !== 1) || (right !== "G") || (bottom < firstDataRow);
     }
 
@@ -116,9 +116,9 @@ export class WorkBookParser {
             return;
         }
 
-        const [ start, end ] = period;
+        const [start, end] = period;
         const spentTime = this.getSpentTime(row, start, end);
-        const [ isPaidAbsenceInit, titleInit ] = this.getWorkDetail(row, start, end);
+        const [isPaidAbsenceInit, titleInit] = this.getWorkDetail(row, start, end);
 
         if (start.f !== undefined) {
             return;
@@ -141,7 +141,7 @@ export class WorkBookParser {
     }
     // codebeat:enable[LOC]
 
-    private static getPeriod(row: IRow): [ ICell<number>, ICell<number> ] | undefined {
+    private static getPeriod(row: IRow): [ICell<number>, ICell<number>] | undefined {
         if (!row.start !== !row.end) {
             throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must either be both empty or non-empty.`);
         }
@@ -154,7 +154,7 @@ export class WorkBookParser {
             throw new Error(`${row.errorPrefix}C${row.row} and D${row.row} must both be dates.`);
         }
 
-        return [ { v: row.start.v, f: row.start.f }, { v: row.end.v, f: row.end.f } ];
+        return [{ v: row.start.v, f: row.start.f }, { v: row.end.v, f: row.end.f }];
     }
 
     private static getSpentTime(row: IRow, start: ICell<number>, end: ICell<number>) {
@@ -175,14 +175,14 @@ export class WorkBookParser {
         return spentTime;
     }
 
-    private static getWorkDetail(row: IRow, start: ICell<number>, end: ICell<number>): [ boolean, string | undefined ] {
+    private static getWorkDetail(row: IRow, start: ICell<number>, end: ICell<number>): [boolean, string | undefined] {
         if (row.holidays && row.otherPaidAbsence) {
             throw new Error(`${row.errorPrefix}A${row.row} and B${row.row} cannot both be non-empty.`);
         }
 
         const isPaidAbsence = !!row.holidays || !!row.otherPaidAbsence;
 
-        return [ isPaidAbsence, isPaidAbsence ? this.getPaidAbsenceTitle(row, end) : this.getTitle(row, start, end) ];
+        return [isPaidAbsence, isPaidAbsence ? this.getPaidAbsenceTitle(row, end) : this.getTitle(row, start, end)];
     }
 
     private static toDate(excelDate: number) {
