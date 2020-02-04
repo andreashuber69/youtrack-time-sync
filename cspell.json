@@ -22,11 +22,11 @@
     "**/*.svg",
     "coverage/**",
     "dist/**",
-    "node_modules/**",
-    "src/model/WorkBookParser.spec/**",
     "karma.conf.js",
+    "node_modules/**",
     "package.json",
     "package-lock.json",
+    "src/model/WorkBookParser.spec/**",
     "tsconfig.json"
   ]
 }

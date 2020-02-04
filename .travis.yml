@@ -1,24 +1,24 @@
 language: node_js
 nodejs:
-  - 10
+- 10
 
 addons:
   chrome: stable
 
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
+- ./cc-test-reporter before-build
 
 script:
-  - npm run ci
+- npm run ci
 
 after_script:
-  - ./cc-test-reporter format-coverage --input-type lcov ./coverage/lcov.lcov
-  - ./cc-test-reporter upload-coverage --id $CODECLIMATE_TEST_REPORTER_ID
-  - export CODECLIMATE_API_HOST=https://codebeat.co/webhooks/code_coverage
-  - export CODECLIMATE_REPO_TOKEN=d77b55df-5cef-4184-afec-16211259ad8b
-  - npx codeclimate-test-reporter < coverage/lcov.lcov
+- ./cc-test-reporter format-coverage --input-type lcov ./coverage/lcov.lcov
+- ./cc-test-reporter upload-coverage --id $CODECLIMATE_TEST_REPORTER_ID
+- export CODECLIMATE_API_HOST=https://codebeat.co/webhooks/code_coverage
+- export CODECLIMATE_REPO_TOKEN=d77b55df-5cef-4184-afec-16211259ad8b
+- npx codeclimate-test-reporter < coverage/lcov.lcov
   
 deploy:
   provider: pages
@@ -33,4 +33,4 @@ deploy:
 notifications:
   email:
     recipients:
-      - secure: "eWbGzXfGPPed3c43k7ejP6gkcArD8Z8ngdhtzt/oX3s6i+vi5JfOFX6zIKDWfcQEEon5XNwvcC/ciPMVMGMDYPBsdsTgKXGrzIgi5u1+2w2wgjAHV9A0Dj4a8zjF9Q+li3pfsRA+4K7LqLEq/SIJ6N9HUiDCvpVuu/uetV2s+f1LGuresuMiwBcJWIgceznG+/MY3l4sDw9RNN3otP8OujwxkJpsLSnIsq3xHSxnkmwqaEnpWG8tcLJNvOLZPRQig/ys3AduBIWKe5ghcsR32pcxoFP/V+SLvSsULXYpJBxU09qTO2ldCf/2TdGS61pPBOaMeSlwV7X/zI8wDElOwqt81tag9h8QKhDHePCDTT0KsPHAvA1CLk6mxNnsz7oOpTFCPeq01oLeYCEvgdnp+RMgU5YysBidromG2wajaYLRsZ0aqWAmerZbm5/7hH7nPSJRXMQbz+Z6nTvrJeSSVGtxcY4ry8Qj6Uwjeb20WjfAunBnawwpTQlGLltMDNhTi94zjMdmnuBYWblqXjY0adbOkEXpZTiySAD5L4iOjb+VMarlferL7E/Hc+YvrK0yUjR8y4IMv3E9mMd/+haL7YiFeMwwqb8iX8DX4SUVleZEsJxcGQgQgUMqGiYMyZCDQrsCkWzdr641pCwZadw1Vl7zUjUKpzaW/EIZiEtLOjE="
+    - secure: vWLnfEwImStBH0eMwrxJjTYjqjEqcHFO7XixN1FK73A9Yei0Tki5LCGz9Ul03omwJbvE+anCFz0LpNV0NOx91AVwlSx95PjP4grYtUKdQ9tlYGcjdQWy6UMKYi2IB2uoV786uiK31t96kbiGM1GnExCSpyyhKi4k6QfLluCWvkteBystu0IcA93RdomQKoUlRv7jFExKR27avWOtamoHnqxilDIPzB1vs1FfimYm6/2c8Bjc+NEC0cOkM5waKt7sT93ikeJZHp86mVSlUTizYv0dVa12jCe6WOD5w9Kpn2Hwa/B57xZXdGBI+J2KwWk9COk4FrYdb7jTuZZdhZj8KfjDZMWJ56tM2Bfl4J1aD+LnsRV3N/FWBUbAK7HXpw30S0VGi6fZ/2KivOdMR8dVVGDB1Qf+sEnRLlmL9i8kgayIT1MVcLl2frYF0WdapCmnU8km+HYmJXrZQi4Nb5A8jQjjYpudyhgMdrK/0TgR5WcEj+sqqyBCb85c6ZVoZ3YPBJVDTqdwOhFBuMX188oAmqqsnccKh4Da4Mqwu6S2jIF+vegSwJMvLGcIfHpHES/diwpVNsfG7ezKg2gCoxdc7foZ1M4o/NXFogMW6GyQ1W/hZQrKr6jkbjBGeFqE7zWH2rJN7XgPpksprniLEj+tzkedjU5ZwG6KfJQe2SPM/7Q=

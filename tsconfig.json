@@ -5,12 +5,12 @@
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": [ "esnext", "dom", "dom.iterable" ],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "paths": {
-      "@/*": [ "src/*" ]
+      "@/*": ["src/*"]
     },
     "strict": true,
     "types": [
