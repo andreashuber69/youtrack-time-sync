@@ -33,16 +33,16 @@
     "ci": "karma start --browsers ChromeHeadless"
   },
   "dependencies": {
-    "vue": "^2.5.22",
-    "vue-class-component": "^6.3.2",
-    "vue-property-decorator": "^7.3.0",
-    "vuetify": "^1.4.2",
+    "vue": "^2.6.11",
+    "vue-class-component": "^7.2.3",
+    "vue-property-decorator": "^8.4.0",
+    "vuetify": "^2.2.12",
     "xlsx": "^0.14.1"
   },
   "devDependencies": {
     "@types/jasmine": "^3.3.5",
-    "@vue/cli-plugin-typescript": "^3.3.0",
-    "@vue/cli-service": "^3.3.0",
+    "@vue/cli-plugin-typescript": "^4.2.2",
+    "@vue/cli-service": "^4.2.2",
     "codeclimate-test-reporter": "^0.5.1",
     "cross-env": "^5.2.0",
     "cspell": "^3.1.3",
@@ -54,38 +54,14 @@
     "karma-typescript": "^3.0.13",
     "lite-server": "^2.4.0",
     "markdownlint-cli": "^0.13.0",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "tslib": "^1.9.3",
+    "node-sass": "^4.13.1",
+    "sass": "^1.25.0",
+    "sass-loader": "^8.0.2",
+    "tslib": "^1.10.0",
     "tslint": "^5.12.1",
-    "typescript": "^3.2.4",
-    "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.5.22",
-    "vuetify-loader": "^1.1.1"
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    ">= 0%",
-    "not Chrome < 54",
-    "not ChromeAndroid < 54",
-    "not Android < 5",
-    "not Firefox < 47",
-    "not FirefoxAndroid < 47",
-    "not Edge < 14",
-    "not Safari < 10",
-    "not iOS < 10",
-    "not Opera < 41",
-    "not OperaMini all",
-    "not Samsung < 5",
-    "not Explorer < 12",
-    "not ExplorerMobile < 12",
-    "not Baidu < 8",
-    "not QQAndroid < 2",
-    "not UCAndroid < 12",
-    "not dead"
-  ]
+    "typescript": "^3.7.5",
+    "vue-cli-plugin-vuetify": "^2.0.5",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.4.3"
+  }
 }

@@ -12,13 +12,15 @@
 // <http://www.gnu.org/licenses/>.
 
 import Vue from "vue";
-// tslint:disable-next-line:no-import-side-effect
-import "./plugins/vuetify";
+
 // tslint:disable-next-line:no-default-import ordered-imports
 import App from "./App.vue";
+// tslint:disable-next-line: no-default-import
+import vuetify from "./plugins/vuetify";
 
 Vue.config.productionTip = false;
 
 new Vue({
+    vuetify,
     render: (h) => h(App),
 }).$mount("#app");
