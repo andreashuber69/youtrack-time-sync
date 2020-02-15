@@ -8,8 +8,8 @@
   <a href="https://github.com/andreashuber69/youtrack-time-sync/releases/latest">
     <img src="https://img.shields.io/github/release-date/andreashuber69/youtrack-time-sync.svg" alt="Release Date">
   </a>
-  <a href="https://travis-ci.org/andreashuber69/youtrack-time-sync">
-    <img src="https://img.shields.io/travis/andreashuber69/youtrack-time-sync.svg" alt="Build">
+  <a href="https://travis-ci.com/andreashuber69/youtrack-time-sync">
+    <img src="https://travis-ci.com/andreashuber69/youtrack-time-sync.svg?branch=master" alt="Build">
   </a>
   <a href="https://github.com/andreashuber69/youtrack-time-sync/issues">
     <img src="https://img.shields.io/github/issues-raw/andreashuber69/youtrack-time-sync.svg" alt="Issues">
