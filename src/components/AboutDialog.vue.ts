@@ -11,6 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { Component, Vue } from "vue-property-decorator";
+
 import { Application } from "../model/Application";
 
 @Component

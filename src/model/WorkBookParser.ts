@@ -11,6 +11,7 @@
 // <http://www.gnu.org/licenses/>.
 
 import { WorkBook, WorkSheet } from "xlsx";
+
 import { ISpentTime } from "./ISpentTime";
 
 interface ICell<T> {
@@ -38,7 +39,7 @@ interface ISheet {
 export class WorkBookParser {
     public static * parse(workBook: WorkBook): IterableIterator<ISpentTime> {
         for (const sheetName of workBook.SheetNames) {
-            yield * this.parseSheet({ name: sheetName, workSheet: workBook.Sheets[sheetName] });
+            yield * WorkBookParser.parseSheet({ name: sheetName, workSheet: workBook.Sheets[sheetName] });
         }
     }
 
@@ -63,13 +64,13 @@ export class WorkBookParser {
         }
 
         const dividerIndex = range.indexOf(":");
-        this.checkRange(dividerIndex < 0, sheet.name, range);
-        const leftTop = this.split(range.substring(0, dividerIndex), sheet.name, range);
-        const rightBottom = this.split(range.substring(dividerIndex + 1, range.length), sheet.name, range);
+        WorkBookParser.checkRange(dividerIndex < 0, sheet.name, range);
+        const leftTop = WorkBookParser.split(range.substring(0, dividerIndex), sheet.name, range);
+        const rightBottom = WorkBookParser.split(range.substring(dividerIndex + 1, range.length), sheet.name, range);
         const firstDataRow = 5;
-        this.checkRange(this.hasCorrectSize(leftTop, rightBottom, firstDataRow), sheet.name, range);
+        WorkBookParser.checkRange(WorkBookParser.hasCorrectSize(leftTop, rightBottom, firstDataRow), sheet.name, range);
 
-        yield * this.iterateRows(firstDataRow, rightBottom[1], sheet);
+        yield * WorkBookParser.iterateRows(firstDataRow, rightBottom[1], sheet);
     }
 
     private static checkRange(fail: boolean, sheetName: string, range: string) {
@@ -80,7 +81,7 @@ export class WorkBookParser {
 
     private static split(corner: string, sheetName: string, range: string): [string, number] {
         const rowIndex = corner.search("[0-9]+");
-        this.checkRange(rowIndex < 0, sheetName, range);
+        WorkBookParser.checkRange(rowIndex < 0, sheetName, range);
 
         return [corner.substring(0, rowIndex), Number.parseInt(corner.substring(rowIndex, corner.length), 10)];
     }
@@ -92,7 +93,7 @@ export class WorkBookParser {
 
     private static * iterateRows(firstDataRow: number, bottom: number, sheet: ISheet) {
         for (let currentRow = firstDataRow; currentRow <= bottom; ++currentRow) {
-            yield * this.parseRow({
+            yield * WorkBookParser.parseRow({
                 errorPrefix: `In sheet ${sheet.name}, `,
                 row: currentRow,
                 holidays: sheet.workSheet[`A${currentRow}`] as ICell<number | string> | undefined,
@@ -110,15 +111,15 @@ export class WorkBookParser {
     // wrapped.
     // codebeat:disable[LOC]
     private static * parseRow(row: IRow) {
-        const period = this.getPeriod(row);
+        const period = WorkBookParser.getPeriod(row);
 
         if (!period) {
             return;
         }
 
         const [start, end] = period;
-        const spentTime = this.getSpentTime(row, start, end);
-        const [isPaidAbsenceInit, titleInit] = this.getWorkDetail(row, start, end);
+        const spentTime = WorkBookParser.getSpentTime(row, start, end);
+        const [isPaidAbsenceInit, titleInit] = WorkBookParser.getWorkDetail(row, start, end);
 
         if (start.f !== undefined) {
             return;
@@ -130,7 +131,7 @@ export class WorkBookParser {
 
         if (titleInit.includes("-")) {
             yield {
-                date: this.toDate(start.v),
+                date: WorkBookParser.toDate(start.v),
                 title: titleInit,
                 type: row.type && row.type.v.toString() || undefined,
                 comments: WorkBookParser.getComments(row),
@@ -182,12 +183,13 @@ export class WorkBookParser {
 
         const isPaidAbsence = !!row.holidays || !!row.otherPaidAbsence;
 
-        return [isPaidAbsence, isPaidAbsence ? this.getPaidAbsenceTitle(row, end) : this.getTitle(row, start, end)];
+        return [isPaidAbsence, isPaidAbsence ?
+            WorkBookParser.getPaidAbsenceTitle(row, end) : WorkBookParser.getTitle(row, start, end)];
     }
 
     private static toDate(excelDate: number) {
         // YouTrack work item dates are represented as milliseconds since unix epoch rounded down to midnight UTC.
-        return new Date(Math.floor(this.excelEpochStartOffset + excelDate) * 24 * 60 * 60 * 1000);
+        return new Date(Math.floor(WorkBookParser.excelEpochStartOffset + excelDate) * 24 * 60 * 60 * 1000);
     }
 
     private static getComments(row: IRow) {

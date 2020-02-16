@@ -19,7 +19,7 @@ export class Application {
     }
 
     public static get title() {
-        return this.packageName.split("-").map((c) => `${c[0].toUpperCase()}${c.substr(1)}`).join(" ");
+        return Application.packageName.split("-").map((c) => `${c[0].toUpperCase()}${c.substr(1)}`).join(" ");
     }
 
     public static get version() {
