@@ -33,12 +33,12 @@ export default class Content extends Vue {
     public fileError: string | null = null;
 
     public timeHeaders = [
-        { text: "Date", sortable: false },
-        { text: "ID", sortable: false },
-        { text: "Summary", sortable: false },
-        { text: "Type", sortable: false },
-        { text: "Comment", sortable: false },
-        { text: "Spent Time", align: "right", sortable: false },
+        { text: "Date", value: "date", sortable: false },
+        { text: "ID", value: "title", sortable: false },
+        { text: "Summary", value: "summary", sortable: false },
+        { text: "Type", value: "type", sortable: false },
+        { text: "Comment", value: "comments", sortable: false },
+        { text: "Spent Time", value: "durationMinutes", align: "right", sortable: false },
     ];
 
     public noSpentTimeText = Content.defaultNoSpentTimeText;

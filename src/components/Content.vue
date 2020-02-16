@@ -50,15 +50,19 @@
               <h3 class="headline">Unreported Spent Time</h3>
             </v-card-title>
             <v-data-table
-              :headers="timeHeaders" :items="checkedModel.times" :no-data-text="noSpentTimeText" :loading="isLoading" hide-actions>
-              <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-              <template slot="items" slot-scope="props">
-                <td>{{ props.item.date.toLocaleDateString() }}</td>
-                <td>{{ props.item.title }}</td>
-                <td>{{ props.item.summary }}</td>
-                <td>{{ props.item.type }}</td>
-                <td style="white-space:pre">{{ props.item.comments.join("\n") }}</td>
-                <td class="text-xs-right">{{ (props.item.durationMinutes / 60).toFixed(2) + "h" }}</td>
+              :headers="timeHeaders" :loading="isLoading"
+              :items="checkedModel.times" :server-items-length="checkedModel.times.length" hide-default-footer>
+              <template v-slot:no-data>
+                {{ noSpentTimeText }}
+              </template>
+              <template v-slot:item.date="{ value }">
+                {{ value.toLocaleDateString() }}
+              </template>
+              <template v-slot:item.comments="{ value }">
+                <span style="white-space:pre">{{ value.join("\n") }}</span>
+              </template>
+              <template v-slot:item.durationMinutes="{ value }">
+                {{ (value / 60).toFixed(2) + "h" }}
               </template>
             </v-data-table>          
           </v-card>

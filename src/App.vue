@@ -15,28 +15,36 @@
 <template>
   <v-app>
     <v-navigation-drawer v-model="isDrawerVisible" app dark temporary>
-      <v-list dense>
-        <v-list-tile @click="onAboutClicked">
-          <v-list-tile-action>
+      <v-list dense nav>
+        <v-list-item link @click="onAboutClicked">
+          <v-list-item-icon>
             <v-icon>help</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>About</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>About</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar app dark>
-      <v-toolbar-side-icon @click.stop="onMenuClicked"></v-toolbar-side-icon>
-      <v-toolbar-title class="hidden-xs-only"><v-icon>sync</v-icon>&nbsp;&nbsp;{{ model.title }}</v-toolbar-title>
+    <v-app-bar app dark>
+      <v-app-bar-nav-icon title="Open menu" @click.stop="onMenuClicked"></v-app-bar-nav-icon>
+      <v-toolbar-title class="hidden-xs-only"><v-icon>sync</v-icon><span class="application-title">&nbsp;&nbsp;{{ model.title }}</span></v-toolbar-title>
       <v-spacer></v-spacer>
-    </v-toolbar>
+    </v-app-bar>
     <v-content>
-      <Content :model="model"/>
-      <AboutDialog ref="aboutDialog"/>
+      <v-container>
+        <Content :model="model"/>
+        <AboutDialog ref="aboutDialog"/>
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script src="./App.vue.ts" lang="ts">
 </script>
+
+<style scoped>
+.application-title {
+  vertical-align: middle;
+}
+</style>
