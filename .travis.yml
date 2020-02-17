@@ -5,6 +5,12 @@ nodejs:
 addons:
   chrome: stable
 
+branches:
+  only:
+  - develop
+  - /^release\/.*/
+  - master
+
 before_script:
 - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 - chmod +x ./cc-test-reporter
@@ -28,7 +34,7 @@ deploy:
   github-token: $GITHUB_TOKEN
   verbose: true
   on:
-    tags: true
+    branch: master
 
 notifications:
   email:
