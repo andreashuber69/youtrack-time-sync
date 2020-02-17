@@ -1,6 +1,14 @@
 {
   "defaultSeverity": "error",
   "extends": "tslint:all",
+  "jsRules": {
+    "max-line-length": { "options": [120] }
+  },
+  "linterOptions": {
+    "exclude": [
+      "package.json"
+    ]
+  },
   "rulesDirectory": [],
   "rules": {
     "comment-format": [true, "check-space"],
@@ -45,8 +53,5 @@
     "promise-function-async": false,
     "strict-boolean-expressions": false,
     "typedef": false
-  },
-  "jsRules": {
-    "max-line-length": { "options": [120] }
   }
 }

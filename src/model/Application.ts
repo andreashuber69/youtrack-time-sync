@@ -10,8 +10,8 @@
 // You should have received a copy of the GNU General Public License along with this program. If not, see
 // <http://www.gnu.org/licenses/>.
 
-// tslint:disable-next-line:no-require-imports no-var-requires
-const packageJson = require("../../package.json") as { name: string; version: string };
+// tslint:disable-next-line: no-default-import
+import packageJson from "../../package.json";
 
 export class Application {
     public static get packageName() {

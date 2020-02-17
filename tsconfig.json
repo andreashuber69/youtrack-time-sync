@@ -10,6 +10,7 @@
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
     // Attempts to configure karma for anything more recent than es5 failed.
