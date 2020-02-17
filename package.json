@@ -54,7 +54,6 @@
     "karma-typescript": "^4.1.1",
     "lite-server": "^2.5.4",
     "markdownlint-cli": "^0.22.0",
-    "node-sass": "^4.13.1",
     "sass": "^1.25.0",
     "sass-loader": "^8.0.2",
     "tslib": "^1.10.0",
