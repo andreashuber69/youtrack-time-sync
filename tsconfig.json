@@ -1,30 +1,25 @@
 {
   "compilerOptions": {
-    // Compilation options
-    "baseUrl": ".",
     "downlevelIteration": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["esnext", "dom", "dom.iterable"],
+    "importHelpers": true,
+    "lib": ["es2017", "dom", "dom.iterable"],
+    "module": "es2015", // This only needs to be set explicitly because we can't currently upgrade "target"
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "paths": {
-      "@/*": ["src/*"]
-    },
+    "sourceMap": true,
     "strict": true,
+    // Attempts to configure karma for anything more recent than es5 failed.
+    // TODO: Revist this once we've switched to Jest
+    "target": "es5",
     "types": [
       "jasmine",
       "vuetify", // https://github.com/vuetifyjs/vue-cli-plugin-vuetify/issues/43#issuecomment-435088739
       "webpack-env"
-    ],
-    // Generation options
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "jsx": "preserve",
-    "module": "esnext",
-    "sourceMap": true,
-    "target": "es5"
+    ]
   },
   "include": [
     "src/**/*.ts"
