@@ -37,7 +37,7 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.0",
     "vuetify": "^2.2.12",
-    "xlsx": "^0.15.5"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@types/jasmine": "^3.5.4",
