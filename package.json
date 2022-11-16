@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/jasmine": "^3.5.4",
     "@vue/cli-plugin-typescript": "^4.2.2",
-    "@vue/cli-service": "^4.2.2",
+    "@vue/cli-service": "^5.0.8",
     "codeclimate-test-reporter": "^0.5.1",
     "cross-env": "^7.0.0",
     "cspell": "^4.0.47",
